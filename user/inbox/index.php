@@ -1,0 +1,1 @@
+<script>window.location.replace("/user/inbox/received/?page=1");</script>

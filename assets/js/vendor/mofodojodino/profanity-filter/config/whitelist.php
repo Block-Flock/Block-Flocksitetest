@@ -1,0 +1,32 @@
+<?php
+
+return array(
+    'sunglasses',
+    'script it',
+    'badass',
+    'glasses',
+    'masses',
+    'basses',
+    'bass',
+    'gasses',
+    'molasses',
+    'lass',
+    'class',
+    'sass',
+    'password',
+    'basso',
+    'classic',
+    'mass',
+    'lass',
+    'asset',
+    'rat',
+    'rat face',
+    'face',
+    'marse',
+    'woman-hater',
+    'shoe',
+    'farming hoe',
+    'sold for',
+    'humpback',
+    'camel hump'
+);
