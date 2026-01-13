@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set Timezone
-date_default_timezone_set('US/Eastern');
+date_default_timezone_set('America/New_York');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/mofodojodino/profanity-filter/src/mofodojodino/ProfanityFilter/Check.php');
 
 try {
