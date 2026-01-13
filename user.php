@@ -3,6 +3,7 @@
    INITIALIZATION & CONFIGURATION
    ========================================================================== */
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/private/mail/extras/htmlfilter.php');
 
 $title = "Profile";
 
@@ -210,7 +211,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH) {
         $font        = $_POST['profile_font'] ?? 'Inter';
         
         // Basic CSS Sanitization (removes HTML tags, but keeps CSS)
-        $customCSS   = strip_tags($_POST['custom_css'] ?? ''); 
+        $raw_css = $_POST['custom_css'] ?? '';
+        // Wrap in style tags so HTMLFilter recognizes it as a style block
+        $wrapped_css = '<style>' . $raw_css . '</style>';
+        // Run the filter (using a dummy path for the spacer image)
+        $filtered_wrapped = HTMLFilter($wrapped_css, '/assets/images/loader.gif');
+        // Extract the cleaned CSS from inside the tags
+        if (preg_match('|<style[^>]*>(.*?)</style>|si', $filtered_wrapped, $matches)) {
+            $customCSS = $matches[1];
+        } else {
+            $customCSS = '';
+        }
         
         $updateStmt = $db->prepare('UPDATE user_profile_customization SET theme=?, background_color=?, accent_color=?, text_color=?, background_image=?, background_music=?, custom_css=?, profile_font=? WHERE user_id=?');
         $updateStmt->execute([$theme, $bgColor, $accentColor, $textColor, $bgImage, $bgMusic, $customCSS, $font, $id]);
@@ -608,7 +619,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                             <div class="box has-background-black-ter has-text-white">
                                 <h4 class="title is-5 has-text-white">About Me</h4>
                                 <div class="content">
-                                    <?= nl2br(htmlspecialchars($gP->blurb ?? 'This user has not written a bio yet.')); ?>
+                                    <?= HTMLFilter($gP->blurb ?? 'This user has not written a bio yet.', '/assets/images/loader.gif'); ?>
                                 </div>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    $("#logoutBtn").click(function() {
+    $("#logoutBtn").click(function(e) {
+        e.preventDefault();
         showModal("Logout",
             "Are you sure you want to logout?",
             '<button class="button is-danger" id="doLogout">Yes</button>'
