@@ -16,7 +16,7 @@ date_default_timezone_set('US/Eastern');
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/mofodojodino/profanity-filter/src/mofodojodino/ProfanityFilter/Check.php');
 
 try {
-    $db = new PDO('mysql:host=127.0.0.1;dbname=goobinator', 'goobinator', 'P5h3SLNFetrfRNsz');
+    $db = new PDO('mysql:host=127.0.0.1;dbname=goobinator', 'belltower', 'goobergas9000');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (Exception $e) {
     die('It appears that we are currently undergoing database maintenance, but don\'t worry, we will be back up soon!');
@@ -54,7 +54,7 @@ class app {
         $this->AUTH = $AUTH;
 
         try {
-            $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=goobinator', 'goobinator', 'P5h3SLNFetrfRNsz');
+            $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=goobinator', 'belltower', 'goobergas9000');
         } catch (Exception $e) {
              die('It appears that we are currently undergoing database maintenance, but don\'t worry, we will be back up soon!');
         }
