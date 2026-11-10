@@ -276,10 +276,16 @@ JS;
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
+<!-- Close header tags to fix layout nesting -->
+        </div>
+    </section>
+</main>
+
 <link rel="stylesheet" href="/assets/css/dashboard.css">
 
-<section class="section">
-    <div class="container dashboard-wrapper">
+<main>
+    <section class="section">
+        <div class="container dashboard-wrapper">
         <?php if (isset($_GET['posted'])): ?>
             <div class="notification is-success is-light"><button class="delete"></button>Status posted successfully!</div>
         <?php endif; ?>
@@ -498,8 +504,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                 </div>
             </div>
         </div>
-    </div>
-</section>
+        </div>
+    </section>
+</main>
 
 <script>
 function copyInviteLink() {

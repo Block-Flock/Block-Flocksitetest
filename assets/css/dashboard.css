@@ -70,7 +70,7 @@
 
 /* Avatars
    ========================================================================== */
-.avatar-container {
+.dashboard-wrapper .avatar-container {
     position: relative;
     display: inline-block;
     border-radius: 12px;
@@ -81,7 +81,7 @@
     margin: 0 auto;
 }
 
-.avatar-main {
+.dashboard-wrapper .avatar-main {
     display: block;
     width: 100%;
     max-width: 280px;
@@ -90,8 +90,8 @@
     border-radius: 12px;
 }
 
-.avatar-friend-container,
-.avatar-status-container {
+.dashboard-wrapper .avatar-friend-container,
+.dashboard-wrapper .avatar-status-container {
     position: relative;
     width: 50px;
     height: 50px;
@@ -102,10 +102,10 @@
     flex-shrink: 0;
 }
 
-.avatar-canvas,
-.avatar-user,
-.avatar-friend,
-.avatar-status {
+.dashboard-wrapper .avatar-canvas,
+.dashboard-wrapper .avatar-user,
+.dashboard-wrapper .avatar-friend,
+.dashboard-wrapper .avatar-status {
     display: block;
     width: 100%;
     height: 100%;
@@ -114,7 +114,7 @@
 
 /* Status indicators
    ========================================================================== */
-.avatar-status-indicator {
+.dashboard-wrapper .avatar-status-indicator {
     position: absolute;
     bottom: 4px;
     right: 4px;
@@ -126,18 +126,18 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.avatar-status-online {
+.dashboard-wrapper .avatar-status-online {
     background-color: var(--success-color);
     box-shadow: 0 0 12px rgba(35, 209, 96, 0.6);
     animation: pulse-online 2s infinite;
 }
 
-.avatar-status-offline {
+.dashboard-wrapper .avatar-status-offline {
     background-color: var(--text-muted);
     box-shadow: 0 0 8px rgba(113, 128, 150, 0.4);
 }
 
-.activity-status {
+.dashboard-wrapper .activity-status {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -145,7 +145,7 @@
     color: var(--text-secondary);
 }
 
-.status-dot {
+.dashboard-wrapper .status-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -153,24 +153,24 @@
     flex-shrink: 0;
 }
 
-.status-online {
+.dashboard-wrapper .status-online {
     background-color: var(--success-color);
     box-shadow: 0 0 8px rgba(35, 209, 96, 0.5);
     animation: pulse-online 2s infinite;
 }
 
-.status-offline {
+.dashboard-wrapper .status-offline {
     background-color: var(--text-muted);
 }
 
 /* Friends list
    ========================================================================== */
-.friends-list {
+.dashboard-wrapper .friends-list {
     max-height: 400px;
     overflow-y: auto;
 }
 
-.friend-item {
+.dashboard-wrapper .friend-item {
     padding: 12px;
     border-bottom: 1px solid var(--border-color);
     transition: all 0.2s ease;
@@ -178,34 +178,34 @@
     margin-bottom: 4px;
 }
 
-.friend-item:hover {
+.dashboard-wrapper .friend-item:hover {
     background-color: rgba(108, 92, 231, 0.1);
     transform: translateX(4px);
 }
 
-.friend-item:last-child {
+.dashboard-wrapper .friend-item:last-child {
     border-bottom: none;
 }
 
-.friend-username {
+.dashboard-wrapper .friend-username {
     font-weight: 600;
     color: var(--text-primary);
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
-.friend-username:hover {
+.dashboard-wrapper .friend-username:hover {
     color: var(--accent-purple);
 }
 
-.friend-status {
+.dashboard-wrapper .friend-status {
     font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
 /* Status items
    ========================================================================== */
-.status-item {
+.dashboard-wrapper .status-item {
     margin-bottom: 16px;
 }
 
