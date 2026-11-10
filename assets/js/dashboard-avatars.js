@@ -259,8 +259,11 @@ class DashboardAvatarRenderer3DTo2D {
     // Render Pipeline
     // -------------------------
     async renderDebounced() {
+        console.log("Checking cache for hash:", this.configHash);
+
         // 1. Check Memory Cache
         if (this.avatarCache.has(this.configHash)) {
+            console.log("Cache HIT (Memory) for hash:", this.configHash);
             const cachedImage = this.avatarCache.get(this.configHash);
             this.drawImageToCanvas(cachedImage);
             return;
@@ -270,6 +273,7 @@ class DashboardAvatarRenderer3DTo2D {
         try {
             const idbCachedImage = await getAvatarFromIDB(this.configHash);
             if (idbCachedImage) {
+                console.log("Cache HIT (IDB) for hash:", this.configHash);
                 // Populate memory cache for this session
                 this.avatarCache.set(this.configHash, idbCachedImage);
                 this.drawImageToCanvas(idbCachedImage);
@@ -282,6 +286,7 @@ class DashboardAvatarRenderer3DTo2D {
         // 3. Check Loading Promises (deduplication)
         const loadingKey = `loading_${this.configHash}`;
         if (loadingPromises.has(loadingKey)) {
+            console.log("Joining existing render for hash:", this.configHash);
             await loadingPromises.get(loadingKey);
             if (this.avatarCache.has(this.configHash)) {
                 const cachedImage = this.avatarCache.get(this.configHash);
@@ -291,6 +296,7 @@ class DashboardAvatarRenderer3DTo2D {
         }
 
         // 4. Render Fresh
+        console.log("Cache MISS for hash:", this.configHash, "- Rendering 3D...");
         const renderPromise = this.renderWithFallback();
         loadingPromises.set(loadingKey, renderPromise);
 
