@@ -306,22 +306,22 @@ $extra_head_content .= '<style>
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
-<section class="hero is-small is-bold">
+<section class="hero is-small is-primary">
     <div class="hero-body">
         <div class="container">
-            <nav class="breadcrumb" aria-label="breadcrumbs">
+            <nav class="breadcrumb has-text-white" aria-label="breadcrumbs">
                 <ul>
-                    <li><a href="/forum">Forum</a></li>
-                    <li><a href="/forum/topic/<?= $thread->subforum ?>"><?= htmlspecialchars($subforum['name']) ?></a></li>
-                    <li class="is-active"><a href="#" aria-current="page"><?= htmlspecialchars($thread->title) ?></a></li>
+                    <li><a href="/forum" class="has-text-white">Forum</a></li>
+                    <li><a href="/forum/topic/<?= $thread->subforum ?>" class="has-text-white"><?= htmlspecialchars($subforum['name']) ?></a></li>
+                    <li class="is-active"><a href="#" class="has-text-white" aria-current="page"><?= htmlspecialchars($thread->title) ?></a></li>
                 </ul>
             </nav>
             
             <div class="columns is-centered">
                 <div class="column is-8">
-                    <h1 class="title"><?= htmlspecialchars($thread->title) ?></h1>
-                    <p class="subtitle is-6">
-                        Posted by <a href="/user/<?= $thread->author ?>"><?= htmlspecialchars($thread->username) ?></a> 
+                    <h1 class="title has-text-white"><?= htmlspecialchars($thread->title) ?></h1>
+                    <p class="subtitle is-6 has-text-white">
+                        Posted by <a href="/user/<?= $thread->author ?>" class="has-text-white has-text-weight-bold"><?= htmlspecialchars($thread->username) ?></a> 
                         <?= timeAgo($thread->timemade) ?>
                         <?php if ($thread->pinned): ?>
                             <span class="tag is-warning is-small">Pinned</span>
@@ -341,15 +341,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
         <div class="columns">
             <div class="column is-3">
                 <aside class="menu">
-                    <p class="menu-label">Thread Info</p>
-                    <div class="box">
-                        <p><strong>Views:</strong> <?= number_format($thread->views) ?></p>
-                        <p><strong>Replies:</strong> <?= number_format($totalReplies) ?></p>
-                        <p><strong>Created:</strong> <?= date('M j, Y', $thread->timemade) ?></p>
+                    <p class="menu-label has-text-grey-light">Thread Info</p>
+                    <div class="glass-box p-4">
+                        <p class="mb-2"><strong>Views:</strong> <?= number_format($thread->views) ?></p>
+                        <p class="mb-2"><strong>Replies:</strong> <?= number_format($totalReplies) ?></p>
+                        <p class="mb-0"><strong>Created:</strong> <?= date('M j, Y', $thread->timemade) ?></p>
                     </div>
                     
                     <?php if ($AUTH && $my->administrator >= 1): ?>
-                        <p class="menu-label">Admin Actions</p>
+                        <p class="menu-label mt-4 has-text-grey-light">Admin Actions</p>
                         <div class="buttons">
                             <a href="/forum/post/<?= $id ?>?action=<?= $thread->locked ? 'unlock' : 'lock' ?>" 
                                class="button is-small <?= $thread->locked ? 'is-success' : 'is-warning' ?>">
@@ -373,7 +373,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
             
             <div class="column is-9">
                 <!-- Original Post -->
-                <div class="box">
+                <div class="glass-box p-5 mb-5">
                     <div class="media">
                         <div class="media-left">
                             <figure class="image is-64x64">
@@ -391,7 +391,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                         <div class="media-content">
                             <div class="content">
                                 <p class="title is-5">
-                                    <a href="/user/<?= $thread->author ?>"><?= htmlspecialchars($thread->username) ?></a>
+                                    <a href="/user/<?= $thread->author ?>" class="has-text-white"><?= htmlspecialchars($thread->username) ?></a>
                                     <?php if ($thread->administrator >= 1): ?>
                                         <span class="tag is-danger is-small">Admin</span>
                                     <?php endif; ?>
@@ -402,8 +402,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                         <span class="tag is-success is-small">Online</span>
                                     <?php endif; ?>
                                 </p>
-                                <p class="subtitle is-6"><?= timeAgo($thread->timemade) ?></p>
-                                <div class="content">
+                                <p class="subtitle is-6 has-text-grey-light"><?= timeAgo($thread->timemade) ?></p>
+                                <div class="content has-text-light">
                                     <?= nl2br(htmlspecialchars($thread->content)) ?>
                                 </div>
                             </div>
@@ -413,7 +413,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                 
                 <!-- Replies -->
                 <?php if ($totalReplies > 0): ?>
-                    <h3 class="title is-4">Replies (<?= number_format($totalReplies) ?>)</h3>
+                    <h3 class="title is-4 has-text-white mb-4">Replies (<?= number_format($totalReplies) ?>)</h3>
                     
                     <?php foreach ($repliesData as $reply): ?>
                         <?php 
@@ -437,7 +437,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                             ]
                         ];
                         ?>
-                        <div class="box">
+                        <div class="glass-box p-4 mb-4">
                             <div class="media">
                                 <div class="media-left">
                                     <figure class="image is-48x48">
@@ -455,7 +455,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                 <div class="media-content">
                                     <div class="content">
                                         <p class="title is-6">
-                                            <a href="/user/<?= $reply->author ?>"><?= htmlspecialchars($reply->username) ?></a>
+                                            <a href="/user/<?= $reply->author ?>" class="has-text-white"><?= htmlspecialchars($reply->username) ?></a>
                                             <?php if ($reply->administrator >= 1): ?>
                                                 <span class="tag is-danger is-small">Admin</span>
                                             <?php endif; ?>
@@ -466,8 +466,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                                 <span class="tag is-success is-small">Online</span>
                                             <?php endif; ?>
                                         </p>
-                                        <p class="subtitle is-7"><?= timeAgo($reply->timemade) ?></p>
-                                        <div class="content">
+                                        <p class="subtitle is-7 has-text-grey-light"><?= timeAgo($reply->timemade) ?></p>
+                                        <div class="content has-text-light">
                                             <?= nl2br(htmlspecialchars($reply->content)) ?>
                                         </div>
                                     </div>
@@ -478,42 +478,42 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                     
                     <!-- Pagination -->
                     <?php if ($totalPages > 1): ?>
-                        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                        <nav class="pagination is-centered mb-5" role="navigation" aria-label="pagination">
                             <?php if ($page > 1): ?>
-                                <a href="/forum/post/<?= $id ?>?page=<?= $page - 1 ?>" class="pagination-previous">Previous</a>
+                                <a href="/forum/post/<?= $id ?>?page=<?= $page - 1 ?>" class="pagination-previous has-text-white glass-box">Previous</a>
                             <?php endif; ?>
                             
                             <?php if ($page < $totalPages): ?>
-                                <a href="/forum/post/<?= $id ?>?page=<?= $page + 1 ?>" class="pagination-next">Next page</a>
+                                <a href="/forum/post/<?= $id ?>?page=<?= $page + 1 ?>" class="pagination-next has-text-white glass-box">Next page</a>
                             <?php endif; ?>
                             
                             <ul class="pagination-list">
                                 <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
                                     <li>
                                         <a href="/forum/post/<?= $id ?>?page=<?= $i ?>" 
-                                           class="pagination-link <?= $i == $page ? 'is-current' : '' ?>"><?= $i ?></a>
+                                           class="pagination-link glass-box has-text-white <?= $i == $page ? 'is-current has-background-primary' : '' ?>" style="<?= $i == $page ? 'border-color: var(--primary);' : '' ?>"><?= $i ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>
                         </nav>
                     <?php endif; ?>
                 <?php else: ?>
-                    <div class="box has-text-centered">
-                        <p class="subtitle">No replies yet. Be the first to respond!</p>
+                    <div class="glass-box has-text-centered mb-5">
+                        <p class="subtitle has-text-grey-light">No replies yet. Be the first to respond!</p>
                     </div>
                 <?php endif; ?>
                 
                 <!-- Reply Form -->
                 <?php if ($AUTH && !$thread->locked): ?>
-                    <div class="box">
-                        <h3 class="title is-5">Post Reply</h3>
+                    <div class="glass-box p-5">
+                        <h3 class="title is-5 has-text-white">Post Reply</h3>
                         <form method="post" action="/forum/reply/<?= $id ?>">
                             <input type="hidden" name="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
                             <div class="field">
                                 <div class="control">
-                                    <textarea class="textarea" name="content" placeholder="Write your reply..." rows="5" maxlength="2000" required></textarea>
+                                    <textarea class="textarea has-background-dark has-text-white" name="content" placeholder="Write your reply..." rows="5" maxlength="2000" required style="border: 1px solid rgba(255,255,255,0.1);"></textarea>
                                 </div>
-                                <p class="help">2000 characters maximum</p>
+                                <p class="help has-text-grey-light">2000 characters maximum</p>
                             </div>
                             <div class="field">
                                 <div class="control">

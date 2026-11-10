@@ -148,67 +148,79 @@ $insert->bindValue(5, substr($_POST['bdate'], 1, 1), PDO::PARAM_INT);
 
 }
 ?>
-<section class="section">
+<section class="section auth-container">
     <div class="container">
-        <div class="columns">
-            <div class="column is-3">
-            </div>
-            <div class="column is-6">
-            <div class="box">
-<?php if(isset($err)) { ?><div class="has-text-danger"><?php echo $err; ?></div><?php } ?>
-<div class="novello-title is-size-4">Register</div>
-<div class="novello-subtitle is-size-6">Enter the following account information to start your new adventure on Bricktaria</div>
- <form method="post" id="regform">
-                    <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
-                    <div class='field'>
-                    <label class="label">Username</label>
-<div class="control has-icons-left">
-                            <input type='text' name="username"  maxlength="15" autocomplete="username"  placeholder='Username ( 3 - 15 characters )' class='input' required>
-<span class="icon is-small is-left"><i class="fas fa-user fa-lg"></i></span>
-<p class="novello-text has-text-grey-light is-size-7">Your username must be at least 3 characters long. An inappropriate username will result into a termination of your account.</p>
-                        </div>
-</div>
-                    <div class='field'>
-                    <label class="label">Password</label>
-                    <div class="control has-icons-left">
-                            <input type='password' name="password"  maxlength="45" placeholder='Password ( minimum 5 characters )' class='input' autocomplete="off" required> 
-                            <span class="icon is-small is-left"><i class="fas fa-lock fa-lg"></i></span>
-<p class="novello-text has-text-grey-light is-size-7">Your password is hashed and safely secured. Do not use the same password as you use on other website incase of emergency.</p>
+        <div class="columns is-centered">
+            <div class="column is-6-tablet is-5-desktop">
+                <div class="glass-box">
+                    <div class="auth-header">
+                        <h1 class="title is-4">Register</h1>
+                        <p class="subtitle is-6">Start your new adventure on Bricktaria</p>
                     </div>
-</div>
-                <div class='field'>
-                <label class="label">Password Confirmation</label>
-                <div class="control has-icons-left">
-                        <input type='password'  name="confpass" maxlength="45"  placeholder='Password Confirmation ( must be the same )'  class='input' autocomplete="off"required>
-                        <span class="icon is-small is-left"><i class="fas fa-lock fa-lg"></i></span>
-                    </div>
-</div>
-  <div class='field'>
-                        <label class="label">E-mail address</label>
-                        <div class="control has-icons-left">
-                                <input type='text' name="email" maxlength="128" autocomplete="email" placeholder='E-mail address ( 2 - 128 characters )' class='input' required>
-                                <span class="icon is-small is-left"><i class="fas fa-envelope fa-lg"></i></span>
-<p class="novello-text has-text-grey-light is-size-7">This is used to verify or to help retrieve your account easily when an emergency occurs regarding to your account.</p>
-                        </div>
-</div>
- <div class='field'>
-                        <label class="label">Date of Birth</label>
-                        <div class="control has-icons-left">
-<input class='input' name="bdate" type="date" autocomplete="off" required>
-   <span class="icon is-small is-left"><i class="fas fa-calendar fa-lg"></i></span>
-</div>
-</div>
-<div class="h-captcha" data-sitekey="14cddd71-a534-4587-9e69-ce41e1b52f89"></div>
-                <div class="field">
-                <button class='button is-info'><b><i class="fas fa-user-plus"></i> Register</b></button>
-</form>
-</div>
-               </div>
-           </div>
-           <div class="column">
 
-           </div>
-       </div>
+                    <?php if(isset($err)) { ?>
+                        <div class="notification is-danger is-light mb-4 p-3 is-size-7">
+                            <?php echo $err; ?>
+                        </div>
+                    <?php } ?>
+
+                    <form method="post" id="regform">
+                        <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                        
+                        <div class='field'>
+                            <label class="label">Username</label>
+                            <div class="control has-icons-left">
+                                <input type='text' name="username" maxlength="15" autocomplete="username" placeholder='Username (3 - 15 characters)' class='input' required>
+                                <span class="icon is-small is-left"><i class="fas fa-user"></i></span>
+                            </div>
+                            <p class="help has-text-grey-light">Must be at least 3 characters. Inappropriate usernames will result in account termination.</p>
+                        </div>
+
+                        <div class='field'>
+                            <label class="label">Password</label>
+                            <div class="control has-icons-left">
+                                <input type='password' name="password" maxlength="45" placeholder='Password (minimum 8 characters)' class='input' autocomplete="off" required> 
+                                <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <p class="help has-text-grey-light">Your password is securely hashed.</p>
+                        </div>
+
+                        <div class='field'>
+                            <label class="label">Confirm Password</label>
+                            <div class="control has-icons-left">
+                                <input type='password' name="confpass" maxlength="45" placeholder='Confirm Password' class='input' autocomplete="off" required>
+                                <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
+                            </div>
+                        </div>
+
+                        <div class='field'>
+                            <label class="label">E-mail Address</label>
+                            <div class="control has-icons-left">
+                                <input type='email' name="email" maxlength="128" autocomplete="email" placeholder='E-mail address' class='input' required>
+                                <span class="icon is-small is-left"><i class="fas fa-envelope"></i></span>
+                            </div>
+                            <p class="help has-text-grey-light">Used for account verification and recovery.</p>
+                        </div>
+
+                        <div class='field'>
+                            <label class="label">Date of Birth</label>
+                            <div class="control has-icons-left">
+                                <input class='input' name="bdate" type="date" autocomplete="off" required>
+                                <span class="icon is-small is-left"><i class="fas fa-calendar"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="field my-4">
+                            <div class="h-captcha" data-sitekey="14cddd71-a534-4587-9e69-ce41e1b52f89"></div>
+                        </div>
+
+                        <div class="field mt-5">
+                            <button class='button is-primary is-fullwidth is-medium'><b><i class="fas fa-user-plus mr-2"></i> Register</b></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 <?php

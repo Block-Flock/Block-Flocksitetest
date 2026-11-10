@@ -37,39 +37,51 @@ if(isset($_POST['blurb']) && $AUTH) {
 <section class="section">
     <div class="container">
         <div class="columns">
-            <div class="column">
-                <aside class="menu">
+            <div class="column is-3">
+                <aside class="menu settings-menu glass-box" style="padding: 1.5rem;">
                 <div class="">
                     <p class="menu-label">General</p>
                     <ul class="menu-list">
                         <li><a id="information_btn" href="/user/settings">Information</a></li>
                         <li><a id="profile_btn" href="/user/settings/general/profile" class="is-active">Profile</a></li>
+                        <li><a href="/user/settings/profile-customization">Profile Customization</a></li>
                     </ul>
-<ul class="menu-list">
- <p class="menu-label">Account</p>
-                <li><a href="/user/settings/account/username">Change Username</a></li>
-                <li><a href="/user/settings/account/password">Change Password</a></li>
-                <li><a href="/user/settings/account/email">Change Email</a></li>
-</ul>
-                    <p class="menu-label">Other</p>
+                    <p class="menu-label mt-4">Account</p>
+                    <ul class="menu-list">
+                        <li><a href="/user/settings/account/username">Change Username</a></li>
+                        <li><a href="/user/settings/account/password">Change Password</a></li>
+                        <li><a href="/user/settings/account/email">Change Email</a></li>
+                    </ul>
+                    <p class="menu-label mt-4">Other</p>
                     <ul class="menu-list">
                         <li><a href="#">Billing</a></li>
                     </ul>
                 </aside>
             </div>
             <div class="column is-9">
-                <div class="box">
-<?php if(isset($err)) { ?><div class="has-text-danger"><?php echo $err; ?></div><?php } ?>
-                    <h2 class="is-size-4">Change blurb</h2>
-                    <p class="has-text-grey-light">Tell us something about yourself! </p>
-                        <form method="post">
-                    <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
-                    <textarea name="blurb" class="textarea" maxlength="255"
-                        placeholder="Tell something about yourself. Keep it short and simple and make sure to not share personal details."><?= nl2br($my->blurb); ?></textarea>
-                    <div class="push-5"></div>
-                    <button class="button is-info">Save changes</button>
+                <div class="glass-box">
+                    <?php if(isset($err)) { ?><div class="notification is-danger is-light mb-4"><?php echo $err; ?></div><?php } ?>
+                    <h2 class="title is-4 mb-2">Change Blurb</h2>
+                    <p class="subtitle is-6 has-text-grey-lighter mb-5">Tell us something about yourself!</p>
+                    
+                    <form method="post">
+                        <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                        
+                        <div class="field">
+                            <div class="control">
+                                <textarea name="blurb" class="textarea has-fixed-size" rows="4" maxlength="255"
+                                    placeholder="Tell something about yourself. Keep it short and simple and make sure to not share personal details."><?= nl2br($my->blurb); ?></textarea>
+                            </div>
+                            <p class="help has-text-grey">Max 255 characters, 5 lines.</p>
+                        </div>
+                        
+                        <div class="field mt-5">
+                            <div class="control">
+                                <button class="button is-primary is-fullwidth">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-</form>
             </div>
         </div>
     </div>

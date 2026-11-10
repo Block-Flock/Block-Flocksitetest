@@ -1,0 +1,808 @@
+:root {
+    /* Global Design System Variables */
+    /* Extracted from Navbar & App Theme */
+    
+    /* Primary Colors */
+    --primary: #ff4500;          /* Matches --nav-primary */
+    --primary-dark: #d84315;     /* Matches --coral-dark */
+    --primary-light: #ff6b35;    /* Matches --coral-light */
+    --coral: #FF6B6B;            /* Requested Coral */
+    --glass: rgba(255, 69, 0, 0.95); /* Matches --nav-glass */
+    
+    /* Neutral / UI Colors */
+    --dark: #1a1a1a;             /* Matches --nav-dark */
+    --light: #ffffff;            /* Matches --text-light */
+    --shadow: rgba(255, 69, 0, 0.3); /* Matches --shadow-color */
+    
+    /* Aliases for compatibility */
+    --nav-primary: var(--primary);
+    --nav-dark: var(--dark);
+    --nav-glass: var(--glass);
+    --coral-dark: var(--primary-dark);
+    --coral-light: var(--primary-light);
+    --text-light: var(--light);
+    --shadow-color: var(--shadow);
+}
+
+/* Global Styles */
+body {
+    background-color: #242426; /* Consistent dark background from app23.css/minireset */
+    color: var(--light);
+}
+
+/* Scrollbar Improvements (from header) */
+html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.22);
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.02);
+}
+::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.34); }
+
+/* =========================================
+   Navbar Components
+   ========================================= */
+
+/* Animated Diagonal Checker Background */
+@keyframes diagonalScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 70px 70px; }
+}
+
+/* Modern Glass Navbar with Checker Pattern */
+.modern-navbar {
+    background: var(--glass);
+    backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 0 !important;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0.75rem 0;
+    min-height: 80px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-radius: 0 !important;
+    margin: 0;
+    width: 100%;
+    
+    /* Seamless checkerboard pattern */
+    background-image: 
+        linear-gradient(15deg, var(--primary-dark) 25%, transparent 25%),
+        linear-gradient(-15deg, var(--primary-dark) 25%, transparent 25%),
+        linear-gradient(15deg, transparent 75%, var(--primary-dark) 75%),
+        linear-gradient(-15deg, transparent 75%, var(--primary-dark) 75%);
+    background-size: 70px 70px;
+    background-position: 0 0, 0 35px, 35px -35px, -35px 0px;
+    background-color: var(--primary-light);
+    animation: diagonalScroll 4s linear infinite;
+}
+
+.modern-navbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 20%, rgba(0, 0, 0, 0.1) 100%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.modern-navbar.scrolled {
+    background: rgba(255, 69, 0, 0.98);
+    padding: 0.5rem 0;
+    min-height: 60px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Center navbar content */
+.navbar .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 20px;
+}
+
+.navbar-brand { margin-right: auto; }
+.navbar-menu { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
+.navbar-start { margin-right: auto; display: flex; justify-content: center; flex-grow: 1; }
+.navbar-end { margin-left: auto; position: relative; display: flex; align-items: center; }
+
+/* Brand / Logo */
+.logo-banner img {
+    height: 50px;
+    width: auto;
+    transition: all 0.3s;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+.logo-banner:hover img {
+    transform: scale(1.05) rotate(-2deg);
+}
+
+/* Navigation Items */
+.navbar-item {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 50px !important;
+    margin: 0 5px;
+    transition: all 0.3s;
+    padding: 0.5rem 1.2rem !important;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    white-space: nowrap;
+}
+.navbar-item:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* --- FIXED DROPDOWN STYLES --- */
+.navbar-item.has-dropdown {
+    position: relative;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    overflow: visible !important;
+    z-index: 2000;
+}
+
+.dropdown-trigger {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.dropdown-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-dropdown {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    padding: 8px 0;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 200px;
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 2001;
+}
+
+.navbar-dropdown.is-active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.navbar-dropdown .navbar-item {
+    color: #333 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0;
+    padding: 10px 20px !important;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    box-shadow: none !important;
+    transform: none !important;
+    font-weight: 500;
+}
+
+.navbar-dropdown .navbar-item:hover {
+    background: #f5f5f5 !important;
+    color: var(--primary) !important;
+    padding-left: 25px !important;
+}
+
+.navbar-dropdown .navbar-item i {
+    width: 24px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.navbar-divider {
+    height: 1px;
+    background-color: #ededed;
+    margin: 4px 0;
+    border: none;
+}
+
+/* Badges */
+.notification-badge { position: relative; display: inline-block; }
+.badge-counter {
+    position: absolute; top: -5px; right: -5px;
+    background: #cc0000; color: white;
+    border-radius: 50%; height: 20px; width: 20px;
+    font-size: 11px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid rgba(255,255,255,0.3);
+    font-weight: bold; z-index: 2;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+/* User Avatar in Nav */
+.user-avatar-nav {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+}
+
+/* Currency Stats */
+.currency-pill {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50px; padding: 8px 18px !important; margin: 0 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Join Button */
+.btn-join {
+    background: #ffffff !important; color: var(--primary) !important;
+    border-radius: 50px !important; font-weight: 800 !important;
+    padding: 0 30px !important; height: 45px;
+}
+
+/* Mobile Burger */
+.navbar-burger {
+    color: white !important; background: rgba(0,0,0,0.2);
+    border-radius: 12px; height: 45px; width: 45px;
+    margin-right: 10px; border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Mobile Responsive Tweaks */
+@media screen and (max-width: 1023px) {
+    .navbar-menu {
+        position: absolute; top: 100%; left: 0; right: 0;
+        background: var(--primary-dark); padding: 1rem;
+        display: none;
+    }
+    .navbar-menu.is-active { display: block; }
+    .navbar-start, .navbar-end { flex-direction: column; width: 100%; }
+    .navbar-item, .dropdown-trigger { width: 100%; justify-content: flex-start; margin: 5px 0; }
+    
+    .navbar-dropdown {
+        position: static;
+        opacity: 1;
+        transform: none;
+        display: none;
+        width: 100%;
+        background: rgba(0,0,0,0.1);
+        box-shadow: none;
+        border: none;
+        margin-top: 5px;
+    }
+    .navbar-dropdown.is-active { display: block; }
+    .navbar-dropdown .navbar-item { color: white !important; }
+    .navbar-dropdown .navbar-item:hover { background: rgba(255,255,255,0.1) !important; color: white !important; }
+}
+
+/* =========================================
+   Footer Components
+   ========================================= */
+
+/* Layout for Sticky Footer */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  /* background-color: #f4f5f7; Removed in favor of global theme */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer.footer {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  padding: 2rem 1.5rem;
+}
+
+.novello-footer-link-title {
+  font-weight: bold;
+  color: #e6e6e6;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.novello-footer-link a {
+  color: #c0c0c0;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.novello-footer-link a:hover {
+  color: #ffffff;
+}
+
+#footer_copyright {
+  color: #aaaaaa;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* =========================================
+   Glass Theme Utilities
+   ========================================= */
+
+.glass-box {
+    background: rgba(23, 23, 23, 0.6);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    color: var(--light);
+}
+
+.glass-box .title, .glass-box .subtitle, .glass-box .label {
+    color: var(--light) !important;
+}
+
+.glass-box .input, .glass-box .textarea, .glass-box .select select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--light);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.glass-box .input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-box .input:focus, .glass-box .textarea:focus, .glass-box .select select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary-dark);
+}
+
+.glass-box .icon {
+    color: var(--primary) !important;
+}
+
+/* Auth Page Specifics */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px - 200px); /* Adjust for navbar and footer */
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header .title {
+    color: var(--primary) !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   User Profile Styles
+   ========================================= */
+
+.profile-banner {
+    height: 150px;
+    background: linear-gradient(to right, var(--primary-dark), #4a4a4a);
+    position: relative;
+    border-radius: 16px 16px 0 0; /* Match glass-box radius */
+}
+
+.avatar-wrapper {
+    position: absolute;
+    bottom: -60px;
+    left: 40px;
+}
+
+.avatar-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 5px solid #2C2F33; /* Should this be dynamic? maybe var(--dark) */
+    background: #16213e;
+    object-fit: cover;
+}
+
+.user-status-dot {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #2C2F33;
+}
+.is-online { 
+    background: #23d160;
+    box-shadow: 0 0 12px rgba(35, 209, 96, 0.6);
+}
+.is-offline { 
+    background: #b5b5b5;
+    box-shadow: 0 0 8px rgba(113, 128, 150, 0.4);
+}
+
+.profile-nav {
+    padding: 10px 40px 10px 200px;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.nav-item {
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.2s;
+    font-weight: bold;
+}
+.nav-item:hover, .nav-item.active {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+.content-area {
+    margin-top: 60px; /* Adjusted for banner/nav overlap */
+    padding: 20px;
+}
+
+/* Friend Grid */
+.friend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+}
+.friend-item {
+    text-align: center;
+    transition: transform 0.2s;
+}
+.friend-item:hover { transform: translateY(-5px); }
+.friend-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    border: 2px solid var(--primary); /* Use primary instead of accent-color default */
+    background: #16213e;
+}
+
+/* Friend status indicators */
+.friend-status-dot {
+    position: absolute;
+    bottom: 30px; /* Adjusted relative to item text */
+    right: 15px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #2C2F33;
+}
+.friend-online { 
+    background: #23d160;
+    box-shadow: 0 0 6px rgba(35, 209, 96, 0.6);
+}
+.friend-offline { 
+    background: #b5b5b5;
+}
+
+/* Activity status */
+.activity-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.status-online {
+    background-color: #23d160;
+    box-shadow: 0 0 8px rgba(35, 209, 96, 0.5);
+}
+
+.status-offline {
+    background-color: #b5b5b5;
+}
+
+/* Avatar canvas styles for user profile */
+canvas.avatar-circle, canvas.friend-avatar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #16213e;
+    border-radius: 50%;
+}
+
+/* Settings Menu */
+.settings-menu .menu-label {
+    color: var(--primary);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.settings-menu .menu-list a {
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.settings-menu .menu-list a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.settings-menu .menu-list a.is-active {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+/* =========================================
+   Store / Marketplace Styles
+   ========================================= */
+
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.item-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.item-card img, .item-card .item-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.price-tag {
+    background-color: #23d160;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.unmoderated-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff9800;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 10;
+}
+
+/* =========================================
+   Avatar Editor Styles
+   ========================================= */
+
+.editor-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    align-items: start;
+    margin-top: 2rem;
+}
+
+.viewer-card {
+    position: sticky;
+    top: 100px;
+}
+
+.avatar-canvas-container, #avatar-canvas {
+    width: 100%;
+    height: 450px;
+    border-radius: 12px;
+    background: radial-gradient(circle at center, #2a2a4e 0%, #16213e 100%);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.paper-doll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 1.5rem;
+}
+
+.doll-row { display: flex; gap: 5px; }
+
+.doll-part {
+    width: 50px; height: 50px;
+    border-radius: 4px; 
+    background-color: rgba(255,255,255,0.1);
+    cursor: pointer; 
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.doll-part:hover { 
+    transform: scale(1.1); 
+    border-color: var(--primary); 
+    background-color: rgba(255,255,255,0.2);
+}
+
+.doll-part.head { border-radius: 12px; }
+.doll-part.torso { width: 100px; height: 100px; }
+.doll-part.limb { width: 40px; height: 100px; }
+
+.control-panel {
+    min-height: 600px;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 1rem;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.inventory-grid .item-card.equipped {
+    border-color: #23d160;
+    box-shadow: 0 0 15px rgba(35, 209, 96, 0.2);
+}
+
+.inventory-grid .item-card.equipped::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 5px; right: 5px;
+    color: #23d160;
+}
+
+.color-palette-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    padding: 2rem;
+}
+
+.color-swatch {
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+.color-swatch:hover { transform: scale(1.2); border-color: white; }
+
+/* =========================================
+   Forum & Groups Styles
+   ========================================= */
+
+.glass-table {
+    background-color: transparent !important;
+    color: var(--light) !important;
+}
+
+.glass-table th {
+    color: var(--primary) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.glass-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    vertical-align: middle;
+}
+
+.glass-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.glass-table strong {
+    color: var(--light);
+}
+
+.forum-category-card {
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.forum-category-card:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.group-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.group-card .media-content {
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .editor-grid { grid-template-columns: 1fr; }
+    .viewer-card { position: relative; top: 0; }
+}
+
+

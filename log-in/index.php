@@ -50,42 +50,51 @@ if(isset($_POST['bctdkio8']) && isset($_POST['8q5EonNy'])) {
 
 }
             ?>
-<section class="section">
+<section class="section auth-container">
     <div class="container">
-        <div class="columns">
-            <div class="column is-3">
-            </div>
-            <div class="column is-6">
-            <div class="box">
-<?php if(isset($err)) { ?><div class="has-text-danger"><?php echo $err; ?></div><?php } ?>
-<div class="novello-title is-size-4">Login</div>
-<div class="novello-subtitle is-size-6">Continue where you left off</div>
-<form method="post">
-                    <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+        <div class="columns is-centered">
+            <div class="column is-5-tablet is-4-desktop">
+                <div class="glass-box">
+                    <div class="auth-header">
+                        <h1 class="title is-4">Login</h1>
+                        <p class="subtitle is-6">Continue where you left off</p>
+                    </div>
+
+                    <?php if(isset($err)) { ?>
+                        <div class="notification is-danger is-light mb-4 p-3 is-size-7">
+                            <?php echo $err; ?>
+                        </div>
+                    <?php } ?>
+
+                    <form method="post">
+                        <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                        
                         <div class='field'>
                             <label class='label'>Username</label>
-<div class="control has-icons-left">
-                                <input type='text' name="bctdkio8"  class='input' placeholder="Enter your username" required>
-<span class="icon is-small is-left"><i class="fas fa-user fa-lg"></i></span>
-</div>
-
+                            <div class="control has-icons-left">
+                                <input type='text' name="bctdkio8" class='input' placeholder="Enter your username" required>
+                                <span class="icon is-small is-left"><i class="fas fa-user"></i></span>
+                            </div>
                         </div>
+
                         <div class='field'>
                             <label class='label'>Password</label>
-<div class="control has-icons-left">
+                            <div class="control has-icons-left">
                                 <input type='password' name="8q5EonNy" autocomplete="current-password" class='input' placeholder="Enter your password" required>
-<span class="icon is-small is-left"><i class="fas fa-unlock-alt fa-lg"></i></span>
-</div>
+                                <span class="icon is-small is-left"><i class="fas fa-unlock-alt"></i></span>
+                            </div>
                         </div>
-                        <div class='field'>
-    <button class='button is-info'><b>Login</b></button>                   
-  </div>
-                    </div>
-<p class="novello-text has-text-centered">Forgot your password? <a href="/reset/">Click here to reset</a></p>
-                 </div>
-                 <div class='column is-4'>
-                 </div>
-             </div>
+
+                        <div class='field mt-5'>
+                            <button class='button is-primary is-fullwidth is-medium'><b>Login</b></button>                   
+                        </div>
+                    </form>
+
+                    <p class="has-text-centered is-size-7 mt-4">
+                        Forgot your password? <a href="/reset/" class="has-text-primary">Click here to reset</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </section>

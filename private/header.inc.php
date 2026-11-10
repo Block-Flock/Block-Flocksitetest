@@ -37,7 +37,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
         'bulma' => ['/assets/css/bulma.min.css', 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css'],
         'bulma-extensions' => ['/assets/css/bulma-extensions.min.css', 'https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css'],
         'mdi' => ['/assets/css/materialdesignicons.min.css', 'https://cdn.jsdelivr.net/npm/@mdi/font@7.0.96/css/materialdesignicons.min.css'],
-        'fontawesome' => ['/assets/css/fontawesome-all.min.css', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css']
+        'fontawesome' => ['/assets/css/fontawesome-all.min.css', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'],
+        // Global Style - Loads last to override defaults
+        'style' => ['/assets/css/style.css', '']
     ];
     
     foreach ($css_map as $k => $arr) {
@@ -47,8 +49,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
         $localPath = $_SERVER['DOCUMENT_ROOT'] . $local;
         
         if (file_exists($localPath)) {
-            echo '<link rel="stylesheet" href="' . $local . '" />' . "\n";
-        } else {
+            echo '<link rel="stylesheet" href="' . $local . '?v=' . filemtime($localPath) . '" />' . "\n";
+        } elseif (!empty($cdn)) {
             // Fallback to HTTPS CDN
             echo '<link rel="stylesheet" href="' . htmlspecialchars($fallbackUrl, ENT_QUOTES, 'UTF-8') . '" />' . "\n";
         }

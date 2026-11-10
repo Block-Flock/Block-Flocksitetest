@@ -71,7 +71,7 @@ $totalPosts = $db->query('SELECT COUNT(*) as count FROM forum_posts')->fetch(PDO
 $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch(PDO::FETCH_OBJ)->count;
 ?>
 
-<section class="hero is-small is-info">
+<section class="hero is-small is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
             <h1 class="title">
@@ -89,7 +89,7 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
             <div class="column is-3">
                 <aside class="menu">
                     <?php if ($AUTH): ?>
-                        <a href="/forum/create" class="button is-info is-fullwidth mb-4">
+                        <a href="/forum/create" class="button is-primary is-fullwidth mb-4">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -107,12 +107,12 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
                         </div>
                     <?php endif; ?>
                     
-                    <p class="menu-label">
+                    <p class="menu-label has-text-grey-light">
                         <i class="fas fa-chart-bar"></i> Forum Statistics
                     </p>
-                    <div class="box">
+                    <div class="glass-box p-4">
                         <div class="content">
-                            <p>
+                            <p class="mb-2">
                                 <span class="icon-text">
                                     <span class="icon has-text-info">
                                         <i class="fas fa-file-alt"></i>
@@ -120,7 +120,7 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
                                     <span><strong><?= number_format($totalPosts) ?></strong> Posts</span>
                                 </span>
                             </p>
-                            <p>
+                            <p class="mb-2">
                                 <span class="icon-text">
                                     <span class="icon has-text-success">
                                         <i class="fas fa-reply"></i>
@@ -128,7 +128,7 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
                                     <span><strong><?= number_format($totalReplies) ?></strong> Replies</span>
                                 </span>
                             </p>
-                            <p>
+                            <p class="mb-0">
                                 <span class="icon-text">
                                     <span class="icon has-text-warning">
                                         <i class="fas fa-fire"></i>
@@ -143,7 +143,7 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
 
             <!-- Main Content -->
             <div class="column is-9">
-                <div class="box mb-4">
+                <div class="glass-box mb-4">
                     <h2 class="title is-4">
                         <i class="fas fa-layer-group"></i> Forum Categories
                     </h2>
@@ -155,10 +155,10 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
                     $threadCount = getThreadCount($db, $id);
                     $latestPost = getLatestPost($db, $id);
                     ?>
-                    <div class="box mb-4">
+                    <div class="glass-box forum-category-card mb-4 p-4">
                         <article class="media">
                             <figure class="media-left">
-                                <span class="icon is-large has-text-info">
+                                <span class="icon is-large has-text-primary">
                                     <i class="<?= $subforum['icon'] ?> fa-2x"></i>
                                 </span>
                             </figure>
@@ -166,32 +166,32 @@ $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch
                                 <div class="content">
                                     <p>
                                         <strong class="is-size-5">
-                                            <a href="/forum/topic/<?= $id ?>"><?= htmlspecialchars($subforum['name']) ?></a>
+                                            <a href="/forum/topic/<?= $id ?>" class="has-text-white"><?= htmlspecialchars($subforum['name']) ?></a>
                                         </strong>
                                         <br>
-                                        <span class="has-text-grey"><?= htmlspecialchars($subforum['desc']) ?></span>
+                                        <span class="has-text-grey-light"><?= htmlspecialchars($subforum['desc']) ?></span>
                                         <br>
-                                        <span class="tag is-info is-light mt-2">
+                                        <span class="tag is-primary is-light mt-2">
                                             <i class="fas fa-folder"></i>&nbsp;&nbsp;<?= number_format($threadCount) ?> thread<?= $threadCount != 1 ? 's' : '' ?>
                                         </span>
                                     </p>
                                     
                                     <?php if ($latestPost): ?>
-                                        <div class="box is-shadowless has-background-light mt-3">
-                                            <p class="is-size-7">
-                                                <strong><i class="fas fa-clock"></i> Latest Activity:</strong>
+                                        <div class="box is-shadowless has-background-dark mt-3 p-3" style="background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.05);">
+                                            <p class="is-size-7 has-text-grey-lighter">
+                                                <strong class="has-text-white"><i class="fas fa-clock"></i> Latest Activity:</strong>
                                                 <br>
-                                                <a href="/forum/post/<?= $latestPost->id ?>" class="has-text-weight-semibold">
+                                                <a href="/forum/post/<?= $latestPost->id ?>" class="has-text-weight-semibold has-text-primary">
                                                     <?= htmlspecialchars($latestPost->title) ?>
                                                 </a>
                                                 <br>
-                                                by <a href="/user/<?= $latestPost->author ?>"><?= htmlspecialchars($latestPost->username) ?></a>
+                                                by <a href="/user/<?= $latestPost->author ?>" class="has-text-light"><?= htmlspecialchars($latestPost->username) ?></a>
                                                 <span class="has-text-grey">• <?= timeAgo($latestPost->lastposttime) ?></span>
                                             </p>
                                         </div>
                                     <?php else: ?>
-                                        <div class="box is-shadowless has-background-light mt-3">
-                                            <p class="is-size-7 has-text-grey-light">
+                                        <div class="box is-shadowless has-background-dark mt-3 p-3" style="background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.05);">
+                                            <p class="is-size-7 has-text-grey">
                                                 <i class="fas fa-inbox"></i> No posts yet. Be the first to start a discussion!
                                             </p>
                                         </div>

@@ -326,156 +326,18 @@ $extra_head_content .= '<style>
         color: var(--text-color);
         min-height: 100vh;
     }
-
-    .glass-panel {
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(15px);
+    
+    /* Override global glass-box border for profile to merge with banner */
+    .glass-box.profile-container {
+        padding: 0;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         overflow: hidden;
-    }
-
-    .profile-banner {
-        height: 150px;
-        background: linear-gradient(to right, var(--accent-color), #4a4a4a);
-        position: relative;
-    }
-
-    .avatar-wrapper {
-        position: absolute;
-        bottom: -60px;
-        left: 40px;
-    }
-
-    .avatar-circle {
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
-        border: 5px solid #2C2F33;
-        background: #16213e;
-        object-fit: cover;
-    }
-
-    .user-status-dot {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        border: 3px solid #2C2F33;
-    }
-    .is-online { 
-        background: #23d160;
-        box-shadow: 0 0 12px rgba(35, 209, 96, 0.6);
-    }
-    .is-offline { 
-        background: #b5b5b5;
-        box-shadow: 0 0 8px rgba(113, 128, 150, 0.4);
-    }
-
-    .profile-nav {
-        padding: 10px 40px 10px 200px;
-        background: rgba(0,0,0,0.3);
-        display: flex;
-        gap: 20px;
-    }
-
-    .nav-item {
-        color: rgba(255,255,255,0.7);
-        cursor: pointer;
-        padding: 5px 10px;
-        border-radius: 5px;
-        transition: 0.2s;
-        font-weight: bold;
-    }
-    .nav-item:hover, .nav-item.active {
-        color: #fff;
-        background: rgba(255,255,255,0.1);
-    }
-
-    .content-area {
-        margin-top: 80px;
-        padding: 20px;
     }
 
     /* Customization Modal */
     .modal-card {
         max-width: 600px;
         width: 100%;
-    }
-
-    /* Friend Grid */
-    .friend-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 15px;
-    }
-    .friend-item {
-        text-align: center;
-        transition: transform 0.2s;
-    }
-    .friend-item:hover { transform: translateY(-5px); }
-    .friend-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin-bottom: 5px;
-        border: 2px solid var(--accent-color);
-        background: #16213e;
-    }
-
-    /* Friend status indicators */
-    .friend-status-dot {
-        position: absolute;
-        bottom: 8px;
-        right: 8px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2px solid #2C2F33;
-    }
-    .friend-online { 
-        background: #23d160;
-        box-shadow: 0 0 6px rgba(35, 209, 96, 0.6);
-    }
-    .friend-offline { 
-        background: #b5b5b5;
-    }
-
-    /* Activity status */
-    .activity-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-    }
-    
-    .status-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-        flex-shrink: 0;
-    }
-    
-    .status-online {
-        background-color: #23d160;
-        box-shadow: 0 0 8px rgba(35, 209, 96, 0.5);
-    }
-    
-    .status-offline {
-        background-color: #b5b5b5;
-    }
-
-    /* Avatar canvas styles for user profile */
-    canvas.avatar-circle, canvas.friend-avatar {
-        display: block;
-        width: 100%;
-        height: 100%;
-        background: #16213e;
     }
 
     /* User Custom CSS Injection */
@@ -506,7 +368,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
             </div>
         <?php endif; ?>
 
-        <div class="glass-panel">
+        <div class="glass-box profile-container">
             <div class="profile-banner">
                 <?php if ($isOwner): ?>
                     <button class="button is-white is-small is-outlined" style="position: absolute; top: 20px; right: 20px;" onclick="openModal('customizeModal')">
@@ -568,14 +430,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 
                         <?php if ($AUTH && !$isOwner && !$isBanned): ?>
                             <div class="buttons are-small">
-                                <a href="/user/inbox/send/<?= $id; ?>" class="button is-info is-fullwidth">
+                                <a href="/user/inbox/send/<?= $id; ?>" class="button is-primary is-fullwidth">
                                     <i class="fas fa-envelope mr-1"></i> Message
                                 </a>
 
                                 <form method="post" class="is-fullwidth" style="width: 100%;">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                                     <?php if ($friendStatus === null): ?>
-                                        <button type="submit" name="friend_action" value="send" class="button is-success is-fullwidth">
+                                        <button type="submit" name="friend_action" value="send" class="button is-primary is-outlined is-fullwidth">
                                             <i class="fas fa-user-plus mr-1"></i> Add Friend
                                         </button>
                                     <?php elseif ($friendStatus === 0): ?>
@@ -584,7 +446,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                         <?php else: ?>
                                             <div class="field has-addons">
                                                 <p class="control is-expanded">
-                                                    <button type="submit" name="friend_action" value="accept" class="button is-success is-fullwidth">Accept</button>
+                                                    <button type="submit" name="friend_action" value="accept" class="button is-primary is-fullwidth">Accept</button>
                                                 </p>
                                                 <p class="control">
                                                     <button type="submit" name="friend_action" value="decline" class="button is-danger">Decline</button>

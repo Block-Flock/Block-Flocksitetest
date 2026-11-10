@@ -199,7 +199,7 @@ $extra_head_content .= '<style>
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
-<section class="hero is-small is-bold">
+<section class="hero is-small is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
             <h1 class="title">
@@ -222,7 +222,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
             <div class="column is-3">
                 <aside class="menu">
                     <?php if ($AUTH) { ?>
-                        <a href="/forum/create/<?= htmlspecialchars((string)$sub) ?>" class="button is-info is-fullwidth is-rounded">
+                        <a href="/forum/create/<?= htmlspecialchars((string)$sub) ?>" class="button is-primary is-fullwidth is-rounded">
                             <i class="fas fa-plus"></i> Create New Thread
                         </a>
                     <?php } else { ?>
@@ -232,21 +232,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                         </div>
                     <?php } ?>
                     
-                    <p class="menu-label">Bricktaria Forums</p>
+                    <p class="menu-label has-text-grey-light">Bricktaria Forums</p>
                     <ul class="menu-list">
                         <li><a href="/forum/topic/1"><i class="fas fa-bullhorn"></i> Announcements</a></li>
                         <li><a href="/forum/topic/2"><i class="fas fa-comments"></i> General Discussion</a></li>
                         <li><a href="/forum/topic/4"><i class="fas fa-store"></i> Marketplace</a></li>
                     </ul>
                     
-                    <p class="menu-label">Other</p>
+                    <p class="menu-label has-text-grey-light">Other</p>
                     <ul class="menu-list">
                         <li><a href="/forum/topic/3"><i class="fas fa-coffee"></i> Off-Topic</a></li>
                         <li><a href="/forum/topic/5"><i class="fas fa-bug"></i> Bug Reports</a></li>
                         <li><a href="/forum/topic/6"><i class="fas fa-gamepad"></i> Games Creation</a></li>
                     </ul>
                     
-                    <p class="menu-label">Navigation</p>
+                    <p class="menu-label has-text-grey-light">Navigation</p>
                     <ul class="menu-list">
                         <li><a href="/forum"><i class="fas fa-home"></i> Forum Home</a></li>
                     </ul>
@@ -255,7 +255,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 
             <div class="column is-9">
                 <?php if ($total == 0): ?>
-                    <div class="box has-text-centered">
+                    <div class="glass-box has-text-centered">
                         <i class="fas fa-comments" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
                         <h3 class="title is-4">No threads yet</h3>
                         <p class="subtitle is-6">Be the first to start a discussion in this forum!</p>
@@ -266,15 +266,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                         <?php endif; ?>
                     </div>
                 <?php else: ?>
-                    <div class="box">
-                        <div class="table-container">
-                            <table class="table is-fullwidth is-striped">
+                    <div class="glass-box p-0 overflow-hidden">
+                        <div class="table-container mb-0">
+                            <table class="table is-fullwidth glass-table mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Thread</th>
-                                        <th>Author</th>
-                                        <th>Replies</th>
-                                        <th>Last Post</th>
+                                        <th class="p-4">Thread</th>
+                                        <th class="p-4">Author</th>
+                                        <th class="p-4">Replies</th>
+                                        <th class="p-4">Last Post</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -301,7 +301,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                         ];
                                         ?>
                                         <tr>
-                                            <td>
+                                            <td class="p-4">
                                                 <div class="media">
                                                     <div class="media-left">
                                                         <figure class="image is-32x32">
@@ -318,7 +318,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                                     </div>
                                                     <div class="media-content">
                                                         <p class="title is-6">
-                                                            <a href="/forum/post/<?= $thread->thread_id ?>"><?= htmlspecialchars($thread->title) ?></a>
+                                                            <a href="/forum/post/<?= $thread->thread_id ?>" class="has-text-white"><?= htmlspecialchars($thread->title) ?></a>
                                                         </p>
                                                         <p class="subtitle is-7">
                                                             <?php if ($thread->administrator >= 1): ?>
@@ -334,14 +334,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <a href="/user/<?= $thread->author ?>"><?= htmlspecialchars($thread->username) ?></a>
+                                            <td class="p-4">
+                                                <a href="/user/<?= $thread->author ?>" class="has-text-light"><?= htmlspecialchars($thread->username) ?></a>
                                             </td>
-                                            <td>
-                                                <span class="tag is-light"><?= $thread->reply_count ?></span>
+                                            <td class="p-4">
+                                                <span class="tag is-dark"><?= $thread->reply_count ?></span>
                                             </td>
-                                            <td>
-                                                <small><?= timeAgo($thread->lastposttime) ?></small>
+                                            <td class="p-4">
+                                                <small class="has-text-grey-light"><?= timeAgo($thread->lastposttime) ?></small>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>

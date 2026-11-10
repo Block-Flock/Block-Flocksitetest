@@ -1,52 +1,5 @@
 </main>
 
-<style>
-  html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    background-color: #f4f5f7;
-    font-family: 'Segoe UI', sans-serif;
-  }
-
-  main {
-    flex: 1 0 auto;
-  }
-
-  footer.footer {
-    background-color: #1f1f1f;
-    color: #ffffff;
-    padding: 2rem 1.5rem;
-  }
-
-  .novello-footer-link-title {
-    font-weight: bold;
-    color: #e6e6e6;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-  }
-
-  .novello-footer-link a {
-    color: #c0c0c0;
-    text-decoration: none;
-    display: block;
-    margin-bottom: 0.25rem;
-    transition: color 0.2s ease;
-  }
-
-  .novello-footer-link a:hover {
-    color: #ffffff;
-  }
-
-  #footer_copyright {
-    color: #aaaaaa;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    display: block;
-  }
-</style>
-
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">

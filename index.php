@@ -10,13 +10,15 @@ $nousers= $selectUserCount->fetch(PDO::FETCH_OBJ);
 ?>
       <section class="section">
       <div class="container">
-<div class="hero-body" style="/* background-image: url('https://media.discordapp.net/attachments/788430429559455764/929782517010165810/Avatoria-avatar-image.png?width=1152&height=268'); */">
+<div class="hero-body glass-box mb-6">
       <div class="columns has-text-centered">
           <div class="column">
-              <h1 class="title">Join Bricktaria Today!</h1>
-              <h2 class="subtitle">A social platform designed to connect players and game creation!</h2>
-              <a href="/join" class="button is-info"><b><i class="fas fa-user-plus"></i>&nbsp;Join us for free!</b></a>
-              <a href="/log-in" class="button is-success"><b><i class="fas fa-user"></i>&nbsp;Already joined</b></a>
+              <h1 class="title has-text-primary is-size-1" style="font-weight: 800; text-transform: uppercase;">Join Bricktaria Today!</h1>
+              <h2 class="subtitle has-text-light is-size-4">A social platform designed to connect players and game creation!</h2>
+              <div class="buttons is-centered mt-5">
+                  <a href="/join" class="button is-primary is-large is-rounded"><b><i class="fas fa-user-plus mr-2"></i> Join us for free!</b></a>
+                  <a href="/log-in" class="button is-light is-outlined is-large is-rounded"><b><i class="fas fa-user mr-2"></i> Already joined</b></a>
+              </div>
           </div>
       </div>
     </div>
@@ -32,26 +34,26 @@ $nousers= $selectUserCount->fetch(PDO::FETCH_OBJ);
           -->
           <div class="columns has-text-centered">
             <div class="column is-one-third">
-              <div class="box">
-                <h1 class="title"><i class="fas fa-user-astronaut"></i></h1>
-                <h2 class="subtitle">Customize your own unique avatar!</h2>
+              <div class="glass-box h-100">
+                <h1 class="title has-text-primary"><i class="fas fa-user-astronaut fa-3x"></i></h1>
+                <h2 class="subtitle mt-4">Customize your own unique avatar!</h2>
               </div>
             </div>
             <div class="column is-one-third">
-              <div class="box">
-                <h1 class="title"><i class="fas fa-gamepad"></i></h1>
-                <h2 class="subtitle">Play Games!</h2>
+              <div class="glass-box h-100">
+                <h1 class="title has-text-primary"><i class="fas fa-gamepad fa-3x"></i></h1>
+                <h2 class="subtitle mt-4">Play Games!</h2>
               </div>
             </div>
             <div class="column is-one-third">
-              <div class="box">
-                <h1 class="title"><i class="fas fa-exchange-alt"></i></h1>
-                <h2 class="subtitle">Trade!</h2>
+              <div class="glass-box h-100">
+                <h1 class="title has-text-primary"><i class="fas fa-exchange-alt fa-3x"></i></h1>
+                <h2 class="subtitle mt-4">Trade!</h2>
               </div>
             </div>
           </div>
-          <div style="height: 15px;"></div>
-          <p class="has-text-centered is-size-7 mb-0">Join the other <b><?php echo isset($nousers->id) ? number_format($nousers->id) : '0'; ?> players building & exploring on Bricktaria today!</p>
+          <div style="height: 30px;"></div>
+          <p class="has-text-centered is-size-6 mb-0 has-text-grey-light">Join the other <b><?php echo isset($nousers->id) ? number_format($nousers->id) : '0'; ?></b> players building & exploring on Bricktaria today!</p>
         </div>
       </section>
       <?php
