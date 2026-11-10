@@ -1,0 +1,15 @@
+# Prevent accidental commits of user databases, backups, and local secrets.
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.p12
+*.pfx
