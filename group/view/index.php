@@ -16,13 +16,16 @@ if(!$AUTH) {
 }
 $getGroup = $db->prepare('SELECT user_groups.*, users.id as userid, users.username FROM user_groups JOIN users ON user_groups.creator = users.id WHERE user_groups.id = ?');
 $getGroup->bindValue(1, $_GET['id'], PDO::PARAM_INT);
-$getGroup->execute();
+try {
+    $getGroup->execute();
+} catch (PDOException $e) {
+    error_log("Group View Main Query Error: " . $e->getMessage());
+}
 
 if($getGroup->rowCount() == 0) {
-
+    error_log("Group View Error: Group ID " . $_GET['id'] . " not found or creator missing.");
     header('Location: /groups');
     die;
-
 }
 
 if(!$AUTH) {
@@ -39,13 +42,21 @@ if($AUTH) {
 $getMember = $db->prepare("SELECT * FROM user_group_members WHERE user = ? AND groupid = ?");
 $getMember->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
 $getMember->bindValue(2, $_GET['id'], PDO::PARAM_INT);
-$getMember->execute();
+try {
+    $getMember->execute();
+} catch (PDOException $e) {
+    error_log("Group View Member Query Error: " . $e->getMessage());
+}
 } else {
     //$getMember->rowCount() = 0;
 }
 $getRanks = $db->prepare("SELECT * FROM user_group_ranks WHERE groupid = ? ORDER BY indicator ASC");
 $getRanks->bindValue(1, $_GET['id'], PDO::PARAM_INT);
-$getRanks->execute();
+try {
+    $getRanks->execute();
+} catch (PDOException $e) {
+    error_log("Group View Ranks Query Error: " . $e->getMessage());
+}
 
 if(isset($getMember) && $getMember->rowCount() > 0) {
 

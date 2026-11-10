@@ -92,6 +92,7 @@ $responseData = json_decode($response);
 
     } else if(!isset($err)) {
 
+        error_log("GROUP_DEBUG: Starting group creation for user " . $_SESSION['id']);
         $logoHash = bin2hex(random_bytes(16));
 
         $updateCur = $db->prepare('UPDATE users SET Currency = Currency - 50 WHERE id = ?');
@@ -105,9 +106,18 @@ $responseData = json_decode($response);
         $insert->bindValue(4, $_SESSION['id'], PDO::PARAM_INT);
         $insert->bindValue(5, $logoHash.'.png', PDO::PARAM_STR);
         $insert->bindValue(6, time(), PDO::PARAM_INT);
-        $insert->execute();
+        
+        try {
+            if (!$insert->execute()) {
+                error_log("GROUP_DEBUG: Failed to insert group. Error: " . print_r($insert->errorInfo(), true));
+            }
+        } catch (PDOException $e) {
+            error_log("GROUP_DEBUG: PDOException during group insert: " . $e->getMessage());
+            $err = "Database error during group creation.";
+        }
 
         $groupid = $db->lastInsertId();
+        error_log("GROUP_DEBUG: Group created with ID: " . $groupid);
 
         $insertMember = $db->prepare('INSERT INTO user_group_members (user, groupid, `rank`, timejoined, logo, name) VALUES (?, ?, ?, ?, ?, ?)');
         $insertMember->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
@@ -116,7 +126,14 @@ $responseData = json_decode($response);
         $insertMember->bindValue(4, time(), PDO::PARAM_INT);
         $insertMember->bindValue(5, $logoHash.'.png', PDO::PARAM_STR);
         $insertMember->bindValue(6, $name, PDO::PARAM_STR);
-        $insertMember->execute();
+        
+        try {
+            if (!$insertMember->execute()) {
+                error_log("GROUP_DEBUG: Failed to insert member. Error: " . print_r($insertMember->errorInfo(), true));
+            }
+        } catch (PDOException $e) {
+            error_log("GROUP_DEBUG: PDOException during member insert: " . $e->getMessage());
+        }
 
         $insertRankOwner = $db->prepare('INSERT INTO user_group_ranks (`name`, groupid, indicator, members, allow_edit_group, allow_all) VALUES (?, ?, ?, ?, ?, ?)');
         $insertRankOwner->bindValue(1, 'Owner', PDO::PARAM_STR);
@@ -125,20 +142,29 @@ $responseData = json_decode($response);
         $insertRankOwner->bindValue(4, '1', PDO::PARAM_INT);
         $insertRankOwner->bindValue(5, '1', PDO::PARAM_INT);
         $insertRankOwner->bindValue(6, '1', PDO::PARAM_INT);
-        $insertRankOwner->execute();
+        
+        if (!$insertRankOwner->execute()) {
+            error_log("GROUP_DEBUG: Failed to insert Owner rank. Error: " . print_r($insertRankOwner->errorInfo(), true));
+        }
 
         $insertRankAdmin = $db->prepare('INSERT INTO user_group_ranks (`name`, groupid, indicator, allow_edit_comments) VALUES (?, ?, ?, ?)');
         $insertRankAdmin->bindValue(1, 'Admin', PDO::PARAM_STR);
         $insertRankAdmin->bindValue(2, $groupid, PDO::PARAM_INT);
         $insertRankAdmin->bindValue(3, '100', PDO::PARAM_INT);
         $insertRankAdmin->bindValue(4, '1', PDO::PARAM_INT);
-        $insertRankAdmin->execute();
+        
+        if (!$insertRankAdmin->execute()) {
+            error_log("GROUP_DEBUG: Failed to insert Admin rank. Error: " . print_r($insertRankAdmin->errorInfo(), true));
+        }
 
         $insertRankMember = $db->prepare('INSERT INTO user_group_ranks (`name`, groupid, indicator) VALUES (?, ?, ?)');
         $insertRankMember->bindValue(1, 'Member', PDO::PARAM_STR);
         $insertRankMember->bindValue(2, $groupid, PDO::PARAM_INT);
         $insertRankMember->bindValue(3, '1', PDO::PARAM_INT);
-        $insertRankMember->execute();
+        
+        if (!$insertRankMember->execute()) {
+            error_log("GROUP_DEBUG: Failed to insert Member rank. Error: " . print_r($insertRankMember->errorInfo(), true));
+        }
 
         $target_dir = $_SERVER['DOCUMENT_ROOT'] . '/JGFJFSHFSAH/core/rendering/group/';
         if (!file_exists($target_dir)) {
