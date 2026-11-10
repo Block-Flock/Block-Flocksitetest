@@ -147,7 +147,7 @@ class Check
     protected $characterExpressions;
 
     /**
-     * @param null $config
+     * @param mixed $config
      */
     public function __construct($config = null, $config2 = null)
     {
