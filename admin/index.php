@@ -145,6 +145,29 @@ if(!$id){
     echo"<script>window.location.replace('/admin');</script>";
 }
 }
+
+if(isset($_POST['quick_verify']) && $AUTH && $my->administrator >= 1) {
+    $id = $_POST['userid'];
+    if(!$id || !is_numeric($id)) {
+        echo "Please enter a valid user ID!";
+    } else {
+        $verify = $db->prepare('UPDATE users SET verified = 1, email_verified = 1 WHERE id = ?');
+        $verify->bindValue(1, $id, PDO::PARAM_INT);
+        $verify->execute();
+
+        $log = $db->prepare('INSERT INTO user_history (`admin`, user, `action`, timemoderated) VALUES (?, ?, ?, ?)');
+        $log->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
+        $log->bindValue(2, $id, PDO::PARAM_INT);
+        $log->bindValue(3, 'Manually Verified User (Quick)', PDO::PARAM_STR);
+        $log->bindValue(4, time(), PDO::PARAM_INT);
+        $log->execute();
+    
+        context::sendDiscordAdminLogs($my->username.' has manually verified user ID **'.$id.'** (Quick)');
+
+        echo "Successfully verified user!";
+        echo "<script>window.location.replace('/admin');</script>";
+    }
+}
 ?>
 
 <form action="#" method="POST">
@@ -157,6 +180,7 @@ if(!$id){
     </div>
     <div class='field'>
 <input type="submit" class="button is-info" name="grant" value="Grant Item">
+<input type="submit" class="button is-success" name="quick_verify" value="Verify User">
 </div>
 </form>
 <br/>

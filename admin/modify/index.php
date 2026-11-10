@@ -172,6 +172,26 @@ if(isset($_POST['ban']) && isset($_POST['ban_note']) && isset($_POST['ban_reason
     die();
 
 }
+
+if(isset($_POST['verify_user']) && $AUTH && $my->administrator >= 1) {
+
+    $verify = $db->prepare('UPDATE users SET verified = 1, email_verified = 1 WHERE id = ?');
+    $verify->bindValue(1, $_GET['id'], PDO::PARAM_INT);
+    $verify->execute();
+
+    $log = $db->prepare('INSERT INTO user_history (`admin`, user, `action`, timemoderated) VALUES (?, ?, ?, ?)');
+    $log->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
+    $log->bindValue(2, $_GET['id'], PDO::PARAM_INT);
+    $log->bindValue(3, 'Manually Verified User', PDO::PARAM_STR);
+    $log->bindValue(4, time(), PDO::PARAM_INT);
+    $log->execute();
+  
+    context::sendDiscordAdminLogs($my->username.' has manually verified user ID **'.$_GET['id'].'**');
+
+    header('Location: /user/'.$_GET['id']);
+    die();
+
+}
 ?>
 <section class="section">
     <div class="container">
@@ -193,6 +213,11 @@ if(isset($_POST['ban']) && isset($_POST['ban_note']) && isset($_POST['ban_reason
                     <form method="post" style="justify-content: center;">
                     <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
                         <button type="submit" style="display: inline-block;" class="button is-danger is-fullwidth" name="scrub_status" onclick="this.classList.toggle('button--loading')"><span class="button__text"><b>Scrub Status</b></span></button>
+                    </form>
+                    <div class="push-5"></div>
+                    <form method="post" style="justify-content: center;">
+                    <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                        <button type="submit" style="display: inline-block;" class="button is-info is-fullwidth" name="verify_user" onclick="this.classList.toggle('button--loading')"><span class="button__text"><b>Verify User</b></span></button>
                     </form>
                     <div class="push-5"></div>
                     <form method="post" style="justify-content: center;">
