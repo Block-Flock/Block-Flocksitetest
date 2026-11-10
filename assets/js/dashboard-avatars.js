@@ -15,6 +15,67 @@ const globalAvatarCache = new Map();
 const loadingPromises = new Map();
 
 // ============================================================================
+// INDEXEDDB CACHE MANAGEMENT (SECURE CLIENT-SIDE ONLY)
+// ============================================================================
+// Note: This cache is local to the user's browser. It is not uploaded to the server.
+// The configHash ensures that the displayed image matches the server-provided configuration.
+// If a user modifies their local IndexedDB, only they will see the altered image.
+// Other users will generate the correct image based on the server's configuration data.
+
+const IDB_CONFIG = {
+    name: 'AvatarCacheDB',
+    version: 1,
+    store: 'avatars'
+};
+
+function openAvatarDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(IDB_CONFIG.name, IDB_CONFIG.version);
+        
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(IDB_CONFIG.store)) {
+                db.createObjectStore(IDB_CONFIG.store);
+            }
+        };
+
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject('IndexedDB open failed');
+    });
+}
+
+async function getAvatarFromIDB(key) {
+    try {
+        const db = await openAvatarDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([IDB_CONFIG.store], 'readonly');
+            const store = transaction.objectStore(IDB_CONFIG.store);
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject('IndexedDB get failed');
+        });
+    } catch (e) {
+        // Silent failure for cache read is acceptable
+        return null;
+    }
+}
+
+async function saveAvatarToIDB(key, blobOrDataUrl) {
+    try {
+        const db = await openAvatarDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([IDB_CONFIG.store], 'readwrite');
+            const store = transaction.objectStore(IDB_CONFIG.store);
+            const request = store.put(blobOrDataUrl, key);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject('IndexedDB put failed');
+        });
+    } catch (e) {
+        console.warn('Avatar IDB Write Error:', e);
+    }
+}
+
+// ============================================================================
 // MAIN RENDERER CLASS - OPTIMIZED FACE RENDERING
 // ============================================================================
 
@@ -198,12 +259,27 @@ class DashboardAvatarRenderer3DTo2D {
     // Render Pipeline
     // -------------------------
     async renderDebounced() {
+        // 1. Check Memory Cache
         if (this.avatarCache.has(this.configHash)) {
             const cachedImage = this.avatarCache.get(this.configHash);
             this.drawImageToCanvas(cachedImage);
             return;
         }
 
+        // 2. Check Persistent IndexedDB Cache
+        try {
+            const idbCachedImage = await getAvatarFromIDB(this.configHash);
+            if (idbCachedImage) {
+                // Populate memory cache for this session
+                this.avatarCache.set(this.configHash, idbCachedImage);
+                this.drawImageToCanvas(idbCachedImage);
+                return;
+            }
+        } catch (e) {
+            console.warn('[Avatar] IDB Check failed, proceeding to render', e);
+        }
+
+        // 3. Check Loading Promises (deduplication)
         const loadingKey = `loading_${this.configHash}`;
         if (loadingPromises.has(loadingKey)) {
             await loadingPromises.get(loadingKey);
@@ -214,13 +290,22 @@ class DashboardAvatarRenderer3DTo2D {
             return;
         }
 
+        // 4. Render Fresh
         const renderPromise = this.renderWithFallback();
         loadingPromises.set(loadingKey, renderPromise);
 
         try {
             const imageData = await renderPromise;
+            
+            // 5. Store in caches
             this.avatarCache.set(this.configHash, imageData);
             this.drawImageToCanvas(imageData);
+            
+            // Save to IDB asynchronously (don't block rendering)
+            saveAvatarToIDB(this.configHash, imageData).catch(err => 
+                console.warn('[Avatar] Failed to save to IDB', err)
+            );
+
         } catch (error) {
             console.error('Avatar render failed:', error);
             this.drawFallback();
