@@ -186,7 +186,7 @@ $extra_head_content = ob_get_clean();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="/assets/js/dashboard-avatars.js"></script>
+<script src="/assets/js/dashboard-avatars.js?v=<?php echo time(); ?>"></script>
 <?php
 
 // 1. Security Checks - Redone after header include to ensure $AUTH is available
@@ -746,7 +746,7 @@ $avatarConfig = [
 
         // ✅ FIXED: No scaling - use original size
         loadBaseModel() {
-            const path = Config.paths.base;
+            const path = Config.paths.base + `?v=${Date.now()}`;
 
             this.gltfLoader.load(path, (gltf) => {
                 if(this.model) this.scene.remove(this.model);
@@ -850,8 +850,9 @@ $avatarConfig = [
             
             try {
                 // Try OBJ first
-                const objPath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.obj`;
-                const texturePath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.png`;
+                const timestamp = Date.now();
+                const objPath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.obj?v=${timestamp}`;
+                const texturePath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.png?v=${timestamp}`;
                 
                 console.log(`Loading 3D ${itemType} item ${itemId} from:`, objPath);
                 
@@ -910,7 +911,7 @@ $avatarConfig = [
                     console.warn(`Could not load ${itemType} item ${itemId} as OBJ:`, error);
                     
                     // Fallback to GLTF if OBJ fails
-                    const gltfPath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.gltf`;
+                    const gltfPath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.gltf?v=${timestamp}`;
                     this.gltfLoader.load(gltfPath, (gltf) => {
                         const itemModel = gltf.scene;
                         // ✅ NO SCALING and NO POSITIONING
@@ -944,7 +945,7 @@ $avatarConfig = [
             if (!itemId || itemId === 0) return;
             
             try {
-                const texturePath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.png`;
+                const texturePath = `${Config.itemPaths[itemType]}/${itemId}/${itemId}.png?v=${Date.now()}`;
                 console.log(`Loading texture ${itemType} item ${itemId} from:`, texturePath);
                 
                 this.textureLoader.load(texturePath, (texture) => {

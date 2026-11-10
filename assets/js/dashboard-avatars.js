@@ -105,7 +105,7 @@ class DashboardAvatarRenderer3DTo2D {
         this.config = {
             faceTexturePath: '/JGFJFSHFSAH/core/rendering/faces',
             itemTexturePath: '/JGFJFSHFSAH/core/rendering',
-            avatarModelPath: '/JGFJFSHFSAH/core/rendering/avatar/avatar.glb',
+            avatarModelPath: `/JGFJFSHFSAH/core/rendering/avatar/avatar.glb?v=${Date.now()}`,
 
             camera: {
                 fov: 35,
