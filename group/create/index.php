@@ -140,7 +140,12 @@ $responseData = json_decode($response);
         $insertRankMember->bindValue(3, '1', PDO::PARAM_INT);
         $insertRankMember->execute();
 
-        if(move_uploaded_file($_FILES['logo']['tmp_name'],$_SERVER['DOCUMENT_ROOT'].'/assets/images/group/'.$logoHash.'.png')) {
+        $target_dir = $_SERVER['DOCUMENT_ROOT'] . '/JGFJFSHFSAH/core/rendering/group/';
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+
+        if(move_uploaded_file($_FILES['logo']['tmp_name'], $target_dir.$logoHash.'.png')) {
 
             $db->prepare("UPDATE user_groups SET moderation_status = 1 WHERE id = ?")->execute([$groupid]);
 

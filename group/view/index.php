@@ -292,7 +292,7 @@ function getMembers(group, rank, page) {
 <meta property="og:title" content="<?php echo htmlspecialchars($gg->name); ?>'s Group ">
 <meta property="og:url" content="<?php echo site; ?>/group/view/<?= $gg->id?>">
 <meta property="og:image"
-    content="/assets/images/group/<?php echo htmlspecialchars($gg->logo);?>?r=<?php echo bin2hex(random_bytes(16)); ?>">
+    content="/JGFJFSHFSAH/core/rendering/group/<?php echo htmlspecialchars($gg->logo);?>?r=<?php echo bin2hex(random_bytes(16)); ?>">
 <meta property="og:site_name" content="Bricktaria">
 <meta property="og:description"
     content="Bricktaria is a game where you can make your own dreams come true! You can play, talk, build, make new friends and much more! Are you ready to join us in this adventure?">
@@ -305,7 +305,7 @@ function getMembers(group, rank, page) {
 <div class="box">
 <article class="media">
 <figure class="media-left">
-<img style="height: 124px; width:124px;" src="/assets/images/group/<?php echo htmlspecialchars($gg->logo);?>?r=<?php echo bin2hex(random_bytes(16)); ?>">
+<img style="height: 124px; width:124px;" src="/JGFJFSHFSAH/core/rendering/group/<?php echo htmlspecialchars($gg->logo);?>?r=<?php echo bin2hex(random_bytes(16)); ?>">
 </figure>
 <div class="media-content">
 <div class="content">
@@ -369,9 +369,13 @@ function getMembers(group, rank, page) {
     <?php } ?>
 <div class="is-divider" data-content="COMMENTS"></div>
 <?php while($cm = $limitallcomments->fetch(PDO::FETCH_OBJ)) {
-    $userinfo = $db->prepare('SELECT group_comments.*, users.* FROM group_comments JOIN users WHERE group_comments.user = users.id AND group_comments.id = ?');
+    $userinfo = $db->prepare('SELECT group_comments.id as comment_id, group_comments.comment, users.username, users.id as user_id, users.avatar_hash FROM group_comments JOIN users WHERE group_comments.user = users.id AND group_comments.id = ?');
     $userinfo->bindValue(1, $cm->id, PDO::PARAM_INT);
-    $userinfo->execute();
+    try {
+        $userinfo->execute();
+    } catch (PDOException $e) {
+        error_log("Group View Comment SQL Error: " . $e->getMessage());
+    }
     $uI = $userinfo->fetch(PDO::FETCH_OBJ);
     ?>
     <div class="box">
@@ -384,7 +388,7 @@ function getMembers(group, rank, page) {
   <div class="media-content">
     <div class="content">
       <p>
-        <strong><a href="/user/<?=$uI->id?>"><?php echo htmlspecialchars($uI->username); ?></a></strong> <small class=" has-text-grey-light"><?php echo ($cm->timecommented) ?></small>
+        <strong><a href="/user/<?=$uI->user_id?>"><?php echo htmlspecialchars($uI->username); ?></a></strong> <small class=" has-text-grey-light"><?php echo ($cm->timecommented) ?></small>
         <br>
 
 <?php echo htmlspecialchars($cm->comment) ?></p>

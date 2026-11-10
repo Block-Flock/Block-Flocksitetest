@@ -114,7 +114,12 @@ if(isset($_FILES['image']['name']) && $getMember->rowCount() >= 1 && $groupExist
         $upd2->bindValue(2, $_GET["id"], PDO::PARAM_INT);
         $upd2->execute();
 
-        if(move_uploaded_file($_FILES['image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'].'/assets/images/group/'.$hash.'.png')) {
+        $target_dir = $_SERVER['DOCUMENT_ROOT'] . '/JGFJFSHFSAH/core/rendering/group/';
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+
+        if(move_uploaded_file($_FILES['image']['tmp_name'], $target_dir.$hash.'.png')) {
 
             header('Location: /group/admin/'.$_GET['id']);
             die;
