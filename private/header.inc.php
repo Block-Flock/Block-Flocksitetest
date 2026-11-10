@@ -56,25 +56,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
     ?>
     
     <link rel="stylesheet" href="/assets/css/shop.css">
- 
-     <style>
-        /* Thin, unobtrusive scrollbar for desktop browsers */
-        html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.22);
-            border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.02);
-        }
-        ::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.34); }
+    <link rel="stylesheet" href="/assets/css/forums.css">
 
-        /* Prevent horizontal overflow caused by large elements */
-        html, body { overflow-x: hidden; }
-
-        /* Reduce overscroll glow on some browsers */
-        body { -webkit-overflow-scrolling: touch; }
-    </style>
 
     <?php perf_mark('before_scripts'); ?>
     
