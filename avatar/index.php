@@ -545,7 +545,7 @@ $avatarConfig = [
         avatar: <?= json_encode($avatarConfig) ?>,
         paths: {
             base: '/JGFJFSHFSAH/core/rendering/avatar/avatar.glb', 
-            baseWithGear: '/JGFJFSHFSAH/core/rendering/avatar/avatar.glb'
+            baseWithGear: '/JGFJFSHFSAH/core/rendering/avatar/avatarwithtool.glb'
         },
         itemPaths: {
             hat: '/JGFJFSHFSAH/core/rendering/hat',
