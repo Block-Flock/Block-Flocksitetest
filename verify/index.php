@@ -3,17 +3,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 $ignore = true;
-require("/var/www/html/private/config.inc.php");
-require '/var/www/html/PHPMailer/src/PHPMailer.php';
-require '/var/www/html/PHPMailer/src/SMTP.php';
-require '/var/www/html/PHPMailer/src/Exception.php';
+require($_SERVER['DOCUMENT_ROOT'] . "/private/config.inc.php");
+require $_SERVER['DOCUMENT_ROOT'] . '/PHPMailer/src/PHPMailer.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/PHPMailer/src/SMTP.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/PHPMailer/src/Exception.php';
 if(!$AUTH)
 {
   die(header("location: /log-in"));
 }
 if($my->email_verified == "1")
 {
-  require("/var/www/html/errors/404.php");
+  require($_SERVER['DOCUMENT_ROOT'] . "/errors/404.php");
   die();
 }
 if(!$verify)
@@ -54,7 +54,7 @@ if(!$verify)
     die("Message could not be sent, error: $mail->ErrorInfo");
   }
 }
-require("/var/www/html/private/header.inc.php");
+require($_SERVER['DOCUMENT_ROOT'] . "/private/header.inc.php");
 ?>
 <section class="section">
     <div class="container">

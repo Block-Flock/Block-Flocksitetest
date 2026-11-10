@@ -1,5 +1,6 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . "/private/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT'] . "/private/mailHandler.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['csrf']) && $_POST['csrf'] == $_SESSION['CSRF-TOKEN']) {
 
@@ -104,16 +105,21 @@ else if($passwordConfirm !== $password) {
  
 // SUCCESSFULL -  Contine to register
 else if(empty($errors)) {
-    $createUserSTMT = $db->prepare("INSERT INTO `users` (`username`, `email`, `password`,  `ip`, `joined`, `avatar_hash`) VALUES (?, ?, ?, ?, " . time() . ", ?)");
+    $token = bin2hex(random_bytes(32));
+
+    $createUserSTMT = $db->prepare("INSERT INTO `users` (`username`, `email`, `password`,  `ip`, `joined`, `avatar_hash`, `emailVerifyCode`) VALUES (?, ?, ?, ?, " . time() . ", ?, ?)");
     $createUserSTMT->bindValue(1, $appname, PDO::PARAM_STR);
     $createUserSTMT->bindValue(2, $email, PDO::PARAM_STR);
     $createUserSTMT->bindValue(3, $encryptedPassword, PDO::PARAM_STR);
     $createUserSTMT->bindValue(4, $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
     $createUserSTMT->bindValue(5, "default", PDO::PARAM_STR);
+    $createUserSTMT->bindValue(6, $token, PDO::PARAM_STR);
     $createUserSTMT->execute();
     
     $id = $db->lastInsertId();
     $_SESSION['id'] = $id;
+
+    mailHandler::sendMail($email, "Verify your account", "Your verification code is: " . $token);
 
     // Create default user colors
     $insertColors = $db->prepare('INSERT INTO user_colors (user, head, torso, left_arm, right_arm, left_leg, right_leg) VALUES (?, ?, ?, ?, ?, ?, ?)');

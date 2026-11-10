@@ -31,11 +31,15 @@ if($my->verified == 1){
 die();
 	}
 	
-//if($verify->code == $code){
-if($code == "54446b00-e5c0-44cb-8b95-611a4f5e7b85"){
-	$update = $db->prepare("UPDATE `users` SET `verified` = 1 WHERE `username` = :getUNM");
+$verifyTokenSTMT = $db->prepare("SELECT * FROM `users` WHERE `emailVerifyCode` = :code AND `username` = :username");
+$verifyTokenSTMT->bindParam(":code", $code, PDO::PARAM_STR);
+$verifyTokenSTMT->bindParam(":username", $my->username, PDO::PARAM_STR);
+$verifyTokenSTMT->execute();
+
+if($verifyTokenSTMT->rowCount() > 0){
+	$update = $db->prepare("UPDATE `users` SET `verified` = 1, `email_verified` = 1, `emailVerifyCode` = '' WHERE `username` = :getUNM");
 	$update->bindParam(":getUNM", $my->username, PDO::PARAM_STR);
-$update->execute();
+    $update->execute();
 	echo"<center>Your account has been successfully verified!</center>";
 	die();
 }else{
