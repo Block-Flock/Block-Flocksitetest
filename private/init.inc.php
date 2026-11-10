@@ -16,7 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
     
     // ✅ SECURITY: Regenerate session ID periodically to prevent fixation
-    $regenerateInterval = 300; // 5 minutes
+    $regenerateInterval = 1800; // 30 minutes
     if (!isset($_SESSION['CREATED'])) {
         $_SESSION['CREATED'] = time();
     } elseif (time() - $_SESSION['CREATED'] > $regenerateInterval) {
