@@ -465,7 +465,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                             <?php if ($reply->premium >= 1): ?>
                                                 <span class="tag is-warning is-small">Premium</span>
                                             <?php endif; ?>
-                                            <?php if ($reply->expire + 300 > time()): ?>
+                                            <?php if ($reply->expire + 1800 > time()): ?>
                                                 <span class="tag is-success is-small">Online</span>
                                             <?php endif; ?>
                                         </p>

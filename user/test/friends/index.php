@@ -203,8 +203,8 @@ $selectFriends->execute();
             <a class="is-pulled-right"  style=" font-size: 17px;" href="/user/report/?id=<?php echo $_GET['id']; ?>">
                 <i class="fas fa-flag"></i>
          </a><?php } ?></div>
-<div class="box has-text-centered" id="profile_imagebox" style="border-bottom: 3px solid <?php if($gP->expire+300 > time()) { echo '#23d160;'; } else if($gP->expire+300 < time()) { echo 'hsl(0, 0%, 48%);'; } ?>"
-title="<?php echo htmlspecialchars($gP->username); ?> is <?php if($gP->expire+300 > time()) { echo 'online'; } else if($gP->expire+300 < time()) { echo 'offline'; } ?>">
+<div class="box has-text-centered" id="profile_imagebox" style="border-bottom: 3px solid <?php if($gP->expire+1800 > time()) { echo '#23d160;'; } else if($gP->expire+1800 < time()) { echo 'hsl(0, 0%, 48%);'; } ?>"
+title="<?php echo htmlspecialchars($gP->username); ?> is <?php if($gP->expire+1800 > time()) { echo 'online'; } else if($gP->expire+1800 < time()) { echo 'offline'; } ?>">
 <img src="/assets/images/avatars/<?php echo $gP->avatar_hash; ?>.png?r=<?php echo bin2hex(random_bytes(16)); ?>"
 onerror="this.src='/assets/images/avatars/default.png?r=<?php echo bin2hex(random_bytes(16)); ?>'"
 alt="">
@@ -268,7 +268,7 @@ alt="">
                         onerror="this.src='/assets/images/avatars/default.png?r=<?php echo bin2hex(random_bytes(16)); ?>'"
                         alt="">
                             <div class="push-10"></div>
-                            <p class="text-truncate"><?php if($fr->expire+300 > time()) {?><span class="is-online">●</span><?php }else if($fr->expire+300 < time()) { ?><span class="has-text-grey-light">●</span><?php } ?>&nbsp;<a href="/user/profile/?id=<?php echo htmlspecialchars($fr->userid); ?>"><?php echo htmlspecialchars($fr->username); ?></a></p>
+                            <p class="text-truncate"><?php if($fr->expire+1800 > time()) {?><span class="is-online">●</span><?php }else if($fr->expire+1800 < time()) { ?><span class="has-text-grey-light">●</span><?php } ?>&nbsp;<a href="/user/profile/?id=<?php echo htmlspecialchars($fr->userid); ?>"><?php echo htmlspecialchars($fr->username); ?></a></p>
                         </div>
                         <?php } ?>
                     </div>

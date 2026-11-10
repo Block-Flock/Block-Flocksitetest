@@ -85,7 +85,7 @@ alt="Could Not Get Profile Image!"style="">
 <a class="is-size-5 usercontent username" href="/user/<?php echo (htmlspecialchars($st->administrator));?>"><?php echo nl2br(htmlspecialchars($st->username)); ?></a>
 <p class="usercontent has-text-grey-light user_page_blurb"><?php echo htmlentities($st->blurb); ?></p>
 </div>
-<?php if (($st->expire + 300) > time()) { ?>
+<?php if (($st->expire + 1800) > time()) { ?>
 <div class="column is-4 is-paddingless-bottom">
 <span class="tag is-success is-pulled-right has-tooltip-top" data-tooltip="<?php echo date("F j, Y, g:i a", $st->expire); ?>">Online</span>
 <?php }else{ ?>

@@ -106,7 +106,7 @@ $displayMsg = ($numReqMessage > 9) ? "9+" : $numReqMessage;
                             <a class="navbar-item" href="/upgrade">
                                 <i class="fas fa-star has-text-warning"></i> Upgrade
                             </a>
-                            <a class="navbar-item has-text-grey" id="logoutBtn" href="javascript:void(0)">
+                            <a class="navbar-item has-text-grey" href="/api/auth/logout/">
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </a>
                         </div>

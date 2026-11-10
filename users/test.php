@@ -140,7 +140,7 @@ if(isset($_POST['scrub']) && $AUTH && $my->administrator >= 1) {
 <article class="media box">
 <figure class="media-left">
 <div class="avatar_dashboard_friend_container">
-<?php if($st->expire+300 > time()) {?><div title="" class="avatar_online_circle circle-xs"></div><?php }else if($st->expire+300 < time()) { ?><div title="" class="avatar_offline_circle circle-xs"></div><?php } ?>
+<?php if($st->expire+1800 > time()) {?><div title="" class="avatar_online_circle circle-xs"></div><?php }else if($st->expire+1800 < time()) { ?><div title="" class="avatar_offline_circle circle-xs"></div><?php } ?>
 <div class="avatar_user avatar_dashboard_friend">
 <img  width="45" height="45" src="/assets/images/avatars/headshots/<?php echo htmlspecialchars($st->avatar_hash); ?>.png?r=<?php echo bin2hex(random_bytes(16)); ?>">
 </figure>

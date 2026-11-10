@@ -172,7 +172,7 @@ if (!empty($allUserIds)) {
                         }
                         
                         $avatarData = getAvatarData($st->id, $userColors, $userWearables);
-                        $isOnline = ($st->expire + 300) > time();
+                        $isOnline = ($st->expire + 1800) > time();
                         ?>
                         <div class="column is-6 mobile-no-paddingBottom">
                             <div class="box userPageBox is-marginless">

@@ -142,6 +142,8 @@ $responseData = json_decode($response);
 
         if(move_uploaded_file($_FILES['logo']['tmp_name'],$_SERVER['DOCUMENT_ROOT'].'/assets/images/group/'.$logoHash.'.png')) {
 
+            $db->prepare("UPDATE user_groups SET moderation_status = 1 WHERE id = ?")->execute([$groupid]);
+
             header('Location: /group/view/'.$groupid);
             die();
 

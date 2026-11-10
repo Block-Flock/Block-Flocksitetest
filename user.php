@@ -297,7 +297,7 @@ $isBanned = $db->prepare('SELECT id FROM user_bans WHERE user_id = ? AND expired
 
 // Activity status for main user
 $current_time = time();
-$online_threshold = 300;
+$online_threshold = 1800;
 $isOnline = isset($gP->expire) && $gP->expire + $online_threshold > $current_time;
 
 // Prepare Custom CSS
@@ -495,7 +495,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                 <div class="friend-grid">
                                     <?php foreach ($friendsList as $fr): ?>
                                         <?php 
-                                        $friendIsOnline = isset($fr->expire) && $fr->expire + 300 > time();
+                                        $friendIsOnline = isset($fr->expire) && $fr->expire + 1800 > time();
                                         $friendAvatarData = $friendsAvatarData[$fr->id] ?? $avatarData;
                                         ?>
                                         <div class="friend-item">

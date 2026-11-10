@@ -648,7 +648,7 @@ $pastUsernames->execute([$id]);
                                      class="avatar-image"
                                      onerror="this.src='/assets/images/avatars/default.png'"
                                      alt="<?php echo htmlspecialchars($gP->username); ?>">
-                                <div class="online-indicator <?php echo ($gP->expire + 300 > time()) ? 'online' : 'offline'; ?>"></div>
+                                <div class="online-indicator <?php echo ($gP->expire + 1800 > time()) ? 'online' : 'offline'; ?>"></div>
                             </div>
                             
                             <h1 class="username-title">
@@ -758,7 +758,7 @@ $pastUsernames->execute([$id]);
                                                      alt="<?php echo htmlspecialchars($friend->username); ?>">
                                             </a>
                                             <div class="is-size-7">
-                                                <?php if($friend->expire + 300 > time()): ?>
+                                                <?php if($friend->expire + 1800 > time()): ?>
                                                 <span class="has-text-success">●</span>
                                                 <?php else: ?>
                                                 <span class="has-text-grey-light">●</span>

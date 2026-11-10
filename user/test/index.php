@@ -203,8 +203,8 @@ $selectFriends->execute();
             <a class="is-pulled-right"  style=" font-size: 17px;" href="/user/report/?id=<?php echo $_GET['id']; ?>">
                 <i class="fas fa-flag"></i>
          </a><?php } ?></div>
-<div class="box has-text-centered mb-1" id="profile_imagebox" style="border-bottom: 3px solid <?php if($gP->expire+300 > time()) { echo '#23d160;'; } else if($gP->expire+300 < time()) { echo 'hsl(0, 0%, 48%);'; } ?>"
-title="<?php echo htmlspecialchars($gP->username); ?> is <?php if($gP->expire+300 > time()) { echo 'online'; } else if($gP->expire+300 < time()) { echo 'offline'; } ?>">
+<div class="box has-text-centered mb-1" id="profile_imagebox" style="border-bottom: 3px solid <?php if($gP->expire+1800 > time()) { echo '#23d160;'; } else if($gP->expire+1800 < time()) { echo 'hsl(0, 0%, 48%);'; } ?>"
+title="<?php echo htmlspecialchars($gP->username); ?> is <?php if($gP->expire+1800 > time()) { echo 'online'; } else if($gP->expire+1800 < time()) { echo 'offline'; } ?>">
 <img src="/assets/images/avatars/<?php echo $gP->avatar_hash; ?>.png?r=<?php echo bin2hex(random_bytes(16)); ?>"
 onerror="this.src='/assets/images/avatars/default.png?r=<?php echo bin2hex(random_bytes(16)); ?>'"
 alt="">

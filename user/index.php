@@ -460,7 +460,7 @@
                                      class="avatar-image"
                                      onerror="this.src='/assets/images/avatars/default.png'"
                                      alt="<?php echo htmlspecialchars($gP->username); ?>">
-                                <div class="online-indicator <?php echo ($gP->expire + 300 > time()) ? 'online' : 'offline'; ?>"></div>
+                                <div class="online-indicator <?php echo ($gP->expire + 1800 > time()) ? 'online' : 'offline'; ?>"></div>
                             </div>
                             
                             <h1 class="username-title">

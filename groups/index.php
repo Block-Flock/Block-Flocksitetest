@@ -18,19 +18,19 @@ $offset = ($page - 1) * $limit;
 
 if($offset < 0) { $offset = 0; }
 
-$selectGroupsNum = $db->prepare('SELECT * FROM user_groups ');
+$selectGroupsNum = $db->prepare('SELECT * FROM user_groups WHERE moderation_status = 1');
 $selectGroupsNum->execute();
 
 $pages = ceil($selectGroupsNum->rowCount() / $limit);
 
 if(!isset($_GET['query'])) {
 
-    $selectGroups = $db->prepare('SELECT user_groups.*, users.id AS `uid`, users.username FROM user_groups JOIN users ON user_groups.creator = users.id ORDER BY user_groups.id DESC LIMIT '.$limit.' OFFSET '.$offset);
+    $selectGroups = $db->prepare('SELECT user_groups.*, users.id AS `uid`, users.username FROM user_groups JOIN users ON user_groups.creator = users.id WHERE user_groups.moderation_status = 1 ORDER BY user_groups.id DESC LIMIT '.$limit.' OFFSET '.$offset);
     $selectGroups->execute();
 
 } else if(isset($_GET['query'])) {
 
-    $selectGroups = $db->prepare('SELECT user_groups.*, users.id AS `uid`, users.username FROM user_groups JOIN users ON user_groups.creator = users.id WHERE user_groups.name LIKE ? ORDER BY user_groups.id DESC LIMIT '.$limit.' OFFSET '.$offset);
+    $selectGroups = $db->prepare('SELECT user_groups.*, users.id AS `uid`, users.username FROM user_groups JOIN users ON user_groups.creator = users.id WHERE user_groups.name LIKE ? AND user_groups.moderation_status = 1 ORDER BY user_groups.id DESC LIMIT '.$limit.' OFFSET '.$offset);
     $selectGroups->bindValue(1, '%'.$_GET['query'].'%', PDO::PARAM_STR);
     $selectGroups->execute();
 
