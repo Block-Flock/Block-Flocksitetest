@@ -278,8 +278,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 
 <link rel="stylesheet" href="/assets/css/dashboard.css">
 
-<section class="section dashboard-wrapper">
-    <div class="container">
+<section class="section">
+    <div class="container dashboard-wrapper">
         <?php if (isset($_GET['posted'])): ?>
             <div class="notification is-success is-light"><button class="delete"></button>Status posted successfully!</div>
         <?php endif; ?>
