@@ -277,7 +277,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
 <style>
-    :root {
+    .dashboard-wrapper {
         --primary-dark: #0f1419;
         --secondary-dark: #1a1f2e;
         --tertiary-dark: #252d3f;
@@ -324,7 +324,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
     .button.is-info:hover { background-color: var(--accent-blue); border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
 </style>
 
-<section class="section">
+<section class="section dashboard-wrapper">
     <div class="container">
         <?php if (isset($_GET['posted'])): ?>
             <div class="notification is-success is-light"><button class="delete"></button>Status posted successfully!</div>

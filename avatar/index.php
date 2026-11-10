@@ -435,6 +435,7 @@ $avatarConfig = [
 <body>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/private/components/navbar.inc.php'); ?>
 
+    <div class="avatar-page-wrapper">
     <div class="editor-grid">
         <div class="left-col">
             <div class="viewer-card">
@@ -496,6 +497,7 @@ $avatarConfig = [
             </div>
         </div>
     </div>
+    </div> <!-- End avatar-page-wrapper -->
 
     <div id="color-modal" class="color-palette-modal" onclick="if(event.target === this) this.style.display='none'">
         <div class="color-grid">
@@ -505,6 +507,7 @@ $avatarConfig = [
             <?php endforeach; ?>
         </div>
     </div>
+    </div> <!-- End avatar-page-wrapper -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
