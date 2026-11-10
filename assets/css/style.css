@@ -24,6 +24,104 @@
     --shadow-color: var(--shadow);
 }
 
+/* Light Mode Overrides */
+body.light-mode {
+    --dark: #f0f0f0;          /* Light gray background */
+    --light: #1a1a1a;         /* Dark text */
+    --glass: rgba(255, 255, 255, 0.95); /* Light glass */
+    --shadow: rgba(0, 0, 0, 0.1);
+    background-color: #f4f5f7; /* Override body background */
+    color: var(--light);
+}
+
+body.light-mode .modern-navbar {
+    background: var(--glass);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    background-image: 
+        linear-gradient(15deg, rgba(0,0,0,0.05) 25%, transparent 25%),
+        linear-gradient(-15deg, rgba(0,0,0,0.05) 25%, transparent 25%),
+        linear-gradient(15deg, transparent 75%, rgba(0,0,0,0.05) 75%),
+        linear-gradient(-15deg, transparent 75%, rgba(0,0,0,0.05) 75%);
+    background-color: #ffffff;
+}
+
+body.light-mode .navbar-item {
+    color: #333 !important;
+    border-color: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.02);
+}
+
+body.light-mode .navbar-item:hover {
+    background: rgba(0,0,0,0.05) !important;
+}
+
+body.light-mode .dropdown-trigger {
+    color: #333 !important;
+    background: rgba(0,0,0,0.02);
+    border-color: rgba(0,0,0,0.1);
+}
+
+body.light-mode .dropdown-trigger:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+body.light-mode .glass-box {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0,0,0,0.05);
+    color: var(--light);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .glass-box .title,
+body.light-mode .glass-box .subtitle,
+body.light-mode .glass-box .label {
+    color: var(--light) !important;
+}
+
+body.light-mode .glass-box .input,
+body.light-mode .glass-box .textarea,
+body.light-mode .glass-box .select select {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0,0,0,0.1);
+    color: var(--light);
+}
+
+body.light-mode .glass-box .input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+body.light-mode .item-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+body.light-mode .item-card:hover {
+    background: #ffffff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+body.light-mode .footer {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+body.light-mode .novello-footer-link-title {
+    color: #1a1a1a;
+}
+
+body.light-mode .novello-footer-link a {
+    color: #4a4a4a;
+}
+
+body.light-mode .novello-footer-link a:hover {
+    color: var(--primary);
+}
+
+/* Ensure modals are always on top of the high z-index navbar */
+.modal {
+    z-index: 10000 !important;
+}
+
 /* Global Styles */
 body {
     background-color: #242426; /* Consistent dark background from app23.css/minireset */
@@ -68,7 +166,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 9999;
     border-radius: 0 !important;
     margin: 0;
     width: 100%;
@@ -364,6 +462,8 @@ footer.footer {
     border-radius: 16px;
     padding: 2rem;
     color: var(--light);
+    position: relative;
+    z-index: 10;
 }
 
 .glass-box .title, .glass-box .subtitle, .glass-box .label {
@@ -803,6 +903,37 @@ canvas.avatar-circle, canvas.friend-avatar {
 @media (max-width: 900px) {
     .editor-grid { grid-template-columns: 1fr; }
     .viewer-card { position: relative; top: 0; }
+}
+
+/* =========================================
+   Forum Responsive Tweaks
+   ========================================= */
+
+@media screen and (max-width: 768px) {
+    /* Ensure sidebar has spacing when stacked */
+    .columns > .column.is-3 {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Adjust glass box padding on small screens */
+    .glass-box {
+        padding: 1.25rem;
+    }
+    
+    /* Allow tables to scroll horizontally if needed, though container usually handles this */
+    .glass-table {
+        white-space: nowrap;
+    }
+    
+    /* Stack media objects in forum cards if text is long */
+    .forum-category-card .media {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .forum-category-card .media-left {
+        margin-bottom: 1rem;
+    }
 }
 
 

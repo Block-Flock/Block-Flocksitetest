@@ -393,10 +393,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                 <p class="title is-5">
                                     <a href="/user/<?= $thread->author ?>" class="has-text-white"><?= htmlspecialchars($thread->username) ?></a>
                                     <?php if ($thread->administrator >= 1): ?>
-                                        <span class="tag is-danger is-small">Admin</span>
+                                        <img src="/assets/images/badges/admin.png" alt="Admin" title="Administrator" style="height: 16px; vertical-align: middle; margin-left: 2px;">
                                     <?php endif; ?>
                                     <?php if ($thread->premium >= 1): ?>
-                                        <span class="tag is-warning is-small">Premium</span>
+                                        <img src="/assets/images/badges/premium.png" alt="Premium" title="Premium Member" style="height: 16px; vertical-align: middle; margin-left: 2px;">
+                                    <?php endif; ?>
+                                    <?php if ($thread->prestige >= 1): ?>
+                                        <img src="/assets/images/badges/pres.png" alt="Prestige" title="Prestige Member" style="height: 16px; vertical-align: middle; margin-left: 2px;">
                                     <?php endif; ?>
                                     <?php if ($thread->expire + 300 > time()): ?>
                                         <span class="tag is-success is-small">Online</span>

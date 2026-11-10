@@ -42,7 +42,7 @@ function countThreadsInSubforum($db, $subId): int {
     return (int)$stmt->fetch(PDO::FETCH_OBJ)->cnt;
 }
 
-// Thread loader function - FIXED: Use aliases to avoid column name conflicts
+// Thread loader function
 function getThreadsBySubforum($db, $subId) {
     $stmt = $db->prepare('
         SELECT fp.id as thread_id, fp.title, fp.author, fp.timemade, fp.lastposttime, fp.subforum, fp.pinned, fp.locked, fp.views,
@@ -51,28 +51,48 @@ function getThreadsBySubforum($db, $subId) {
         FROM forum_posts fp
         JOIN users u ON u.id = fp.author
         WHERE fp.subforum = ?
-        ORDER BY fp.lastposttime DESC
+        ORDER BY fp.pinned DESC, fp.lastposttime DESC
     ');
     $stmt->execute([$subId]);
     return $stmt;
 }
 
+// Global Recent Activity function
+function getGlobalRecentActivity($db, $limit = 5) {
+    $stmt = $db->prepare('
+        SELECT fp.id as thread_id, fp.title, fp.lastposttime, fp.author, u.username, u.avatar_hash, u.administrator, u.premium
+        FROM forum_posts fp
+        JOIN users u ON u.id = fp.author
+        ORDER BY fp.lastposttime DESC
+        LIMIT ' . (int)$limit
+    );
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
 // Get thread data
 $total = countThreadsInSubforum($db, $sub);
 $threads = getThreadsBySubforum($db, $sub);
+$recentActivity = getGlobalRecentActivity($db, 5);
 
 // ============================================================================
-// FETCH AVATAR DATA FOR ALL THREAD AUTHORS
+// FETCH AVATAR DATA FOR ALL RELEVANT USERS
 // ============================================================================
 
-// Collect all user IDs from threads
+// Collect all user IDs from threads AND recent activity
 $allUserIds = [];
 
-// Reset the pointer to fetch again
+// From Threads
 $threads->execute([$sub]);
 while ($thread = $threads->fetch(PDO::FETCH_OBJ)) {
     $allUserIds[] = (int)$thread->author;
 }
+
+// From Recent Activity
+foreach ($recentActivity as $activity) {
+    $allUserIds[] = (int)$activity->author;
+}
+
 $allUserIds = array_unique($allUserIds);
 $allUserIds = array_map('intval', array_values($allUserIds));
 
@@ -106,7 +126,7 @@ if (!empty($allUserIds)) {
     }
 }
 
-// Pre-fetch avatar data for all thread authors
+// Pre-fetch avatar data for all authors
 $threadsAvatarData = [];
 if (!empty($allUserIds)) {
     foreach ($allUserIds as $userId) {
@@ -124,25 +144,18 @@ $threads->execute([$sub]);
 // LOAD THREE.JS AND AVATAR RENDERER
 // ============================================================================
 
-/*
- * Extra head content: prefer local vendor assets if present,
- * else fall back to CDN.
- */
 $localThree = $_SERVER['DOCUMENT_ROOT'] . '/assets/vendor/three.min.js';
 $localGLTF = $_SERVER['DOCUMENT_ROOT'] . '/assets/vendor/GLTFLoader.js';
 $localOBJ = $_SERVER['DOCUMENT_ROOT'] . '/assets/vendor/OBJLoader.js';
 
 $extra_head_content = '';
 
-// Prefer local three.min.js when it exists
 if (file_exists($localThree)) {
     $extra_head_content .= '<script src="/assets/vendor/three.min.js"></script>' . PHP_EOL;
 } else {
-    // fallback to CDN
     $extra_head_content .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>' . PHP_EOL;
 }
 
-// Load loaders if available locally; otherwise use CDN fallbacks.
 if (file_exists($localGLTF)) {
     $extra_head_content .= '<script src="/assets/vendor/GLTFLoader.js"></script>' . PHP_EOL;
 } else {
@@ -155,25 +168,6 @@ if (file_exists($localOBJ)) {
     $extra_head_content .= '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>' . PHP_EOL;
 }
 
-// Small inline diagnostics/fallback to help detect loader issues quickly.
-$extra_head_content .= <<<JS
-<script>
-  (function(){
-    function log(s){ try{ console.info('[Forum loader] ' + s); } catch(e){} }
-    if (window.THREE) {
-      log('THREE present, r' + (THREE.REVISION || 'unknown'));
-    } else {
-      log('THREE not present yet.');
-    }
-    // Check for loaders - warn if not found so you can debug quickly
-    setTimeout(function(){
-      log('GLTFLoader ' + (window.THREE && window.THREE.GLTFLoader ? 'OK' : 'MISSING'));
-      log('OBJLoader ' + (window.THREE && window.THREE.OBJLoader ? 'OK' : 'MISSING'));
-    }, 2000);
-  })();
-</script>
-JS;
-
 // Add CSS for avatar canvases
 $extra_head_content .= '<style>
     .avatar-forum {
@@ -185,6 +179,11 @@ $extra_head_content .= '<style>
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
+    .avatar-forum-large {
+        width: 48px;
+        height: 48px;
+    }
+    
     .image.is-32x32 {
         width: 32px;
         height: 32px;
@@ -193,6 +192,14 @@ $extra_head_content .= '<style>
     .image.is-32x32 canvas {
         width: 100%;
         height: 100%;
+    }
+    
+    .forum-topic-row {
+        transition: background-color 0.2s ease;
+    }
+    
+    .forum-topic-row:hover {
+        background-color: rgba(255, 255, 255, 0.05);
     }
 </style>';
 
@@ -219,48 +226,95 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 <section class="section">
     <div class="container">
         <div class="columns">
+            <!-- Sidebar -->
             <div class="column is-3">
                 <aside class="menu">
                     <?php if ($AUTH) { ?>
-                        <a href="/forum/create/<?= htmlspecialchars((string)$sub) ?>" class="button is-primary is-fullwidth is-rounded">
-                            <i class="fas fa-plus"></i> Create New Thread
+                        <a href="/forum/create/<?= htmlspecialchars((string)$sub) ?>" class="button is-primary is-fullwidth is-rounded mb-5">
+                            <i class="fas fa-plus"></i>&nbsp;Create New Thread
                         </a>
                     <?php } else { ?>
-                        <div class="notification is-warning is-light">
+                        <div class="notification is-warning is-light mb-5">
                             <i class="fas fa-exclamation-triangle"></i> 
                             You need to be logged in to create new threads
                         </div>
                     <?php } ?>
                     
-                    <p class="menu-label has-text-grey-light">Bricktaria Forums</p>
-                    <ul class="menu-list">
-                        <li><a href="/forum/topic/1"><i class="fas fa-bullhorn"></i> Announcements</a></li>
-                        <li><a href="/forum/topic/2"><i class="fas fa-comments"></i> General Discussion</a></li>
-                        <li><a href="/forum/topic/4"><i class="fas fa-store"></i> Marketplace</a></li>
-                    </ul>
-                    
-                    <p class="menu-label has-text-grey-light">Other</p>
-                    <ul class="menu-list">
-                        <li><a href="/forum/topic/3"><i class="fas fa-coffee"></i> Off-Topic</a></li>
-                        <li><a href="/forum/topic/5"><i class="fas fa-bug"></i> Bug Reports</a></li>
-                        <li><a href="/forum/topic/6"><i class="fas fa-gamepad"></i> Games Creation</a></li>
-                    </ul>
+                    <p class="menu-label has-text-grey-light">
+                        <i class="fas fa-bolt"></i> Recent Activity
+                    </p>
+                    <div class="glass-box p-3 mb-5">
+                        <?php if (empty($recentActivity)): ?>
+                            <p class="has-text-grey is-size-7">No recent activity.</p>
+                        <?php else: ?>
+                            <?php foreach ($recentActivity as $act): ?>
+                                <?php 
+                                    $actAvatar = $threadsAvatarData[$act->author] ?? ['colors' => [], 'items' => []]; 
+                                ?>
+                                <article class="media mb-3">
+                                    <figure class="media-left">
+                                        <p class="image is-32x32">
+                                            <canvas class="avatar-forum avatar-canvas"
+                                                    id="sidebar-avatar-<?= $act->thread_id ?>-<?= $act->author ?>"
+                                                    width="32" height="32"
+                                                    data-user-id="<?= $act->author ?>"
+                                                    data-render-type="avatar"
+                                                    data-colors='<?= htmlspecialchars(json_encode($actAvatar['colors']), ENT_QUOTES, 'UTF-8') ?>'
+                                                    data-items='<?= htmlspecialchars(json_encode($actAvatar['items']), ENT_QUOTES, 'UTF-8') ?>'
+                                                    data-hash="<?= htmlspecialchars($act->avatar_hash) ?>">
+                                            </canvas>
+                                        </p>
+                                    </figure>
+                                    <div class="media-content">
+                                        <div class="content is-small">
+                                            <p class="mb-0">
+                                                <a href="/forum/post/<?= $act->thread_id ?>" class="has-text-weight-bold has-text-white" style="line-height: 1.2; display: block; margin-bottom: 2px;">
+                                                    <?= htmlspecialchars($act->title) ?>
+                                                </a>
+                                                <span class="has-text-grey-light is-size-7">
+                                                    by <a href="/user/<?= $act->author ?>" class="has-text-grey-light"><?= htmlspecialchars($act->username) ?></a>
+                                                </span>
+                                                <br>
+                                                <span class="has-text-grey is-size-7"><?= timeAgo($act->lastposttime) ?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                     
                     <p class="menu-label has-text-grey-light">Navigation</p>
                     <ul class="menu-list">
-                        <li><a href="/forum"><i class="fas fa-home"></i> Forum Home</a></li>
+                        <li><a href="/forum"><i class="fas fa-arrow-left"></i> Back to Forum Home</a></li>
                     </ul>
                 </aside>
             </div>
 
+            <!-- Main Content -->
             <div class="column is-9">
+                <div class="glass-box mb-4 p-5">
+                     <div class="level is-mobile">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <div>
+                                    <h3 class="title is-4 mb-1 has-text-weight-bold">
+                                        <i class="<?= $info['icon'] ?> mr-2"></i><?= htmlspecialchars($info['name']) ?>
+                                    </h3>
+                                    <p class="subtitle is-6 has-text-grey-light">Browsing category</p>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+
                 <?php if ($total == 0): ?>
-                    <div class="glass-box has-text-centered">
+                    <div class="glass-box has-text-centered p-6">
                         <i class="fas fa-comments" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
                         <h3 class="title is-4">No threads yet</h3>
                         <p class="subtitle is-6">Be the first to start a discussion in this forum!</p>
                         <?php if ($AUTH): ?>
-                            <a href="/forum/create/<?= $sub ?>" class="button is-primary">
+                            <a href="/forum/create/<?= $sub ?>" class="button is-primary mt-3">
                                 <i class="fas fa-plus"></i> Create First Thread
                             </a>
                         <?php endif; ?>
@@ -271,39 +325,50 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                             <table class="table is-fullwidth glass-table mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="p-4">Thread</th>
-                                        <th class="p-4">Author</th>
-                                        <th class="p-4">Replies</th>
-                                        <th class="p-4">Last Post</th>
+                                        <th class="p-4 has-text-grey-light" width="50%">Topic</th>
+                                        <th class="p-4 has-text-grey-light">Author</th>
+                                        <th class="p-4 has-text-centered has-text-grey-light">Replies</th>
+                                        <th class="p-4 has-text-right has-text-grey-light">Last Activity</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php while ($thread = $threads->fetch(PDO::FETCH_OBJ)): ?>
                                         <?php 
                                         $authorAvatarData = $threadsAvatarData[$thread->author] ?? [
-                                            'colors' => [
-                                                'head' => [1, 0.8, 0.6],
-                                                'torso' => [0.2, 0.2, 0.8],
-                                                'leftArm' => [1, 0.8, 0.6],
-                                                'rightArm' => [1, 0.8, 0.6],
-                                                'leftLeg' => [0.1, 0.1, 0.1],
-                                                'rightLeg' => [0.1, 0.1, 0.1]
-                                            ],
-                                            'items' => [
-                                                'hats' => [],
-                                                'face' => 'default',
-                                                'accessory' => 0,
-                                                'tshirt' => 0,
-                                                'shirt' => 0,
-                                                'pants' => 0,
-                                                'gear' => 0
-                                            ]
+                                            'colors' => [],
+                                            'items' => []
                                         ];
                                         ?>
-                                        <tr>
+                                        <tr class="forum-topic-row">
                                             <td class="p-4">
-                                                <div class="media">
-                                                    <div class="media-left">
+                                                <div class="is-flex is-align-items-center">
+                                                    <?php if ($thread->pinned): ?>
+                                                        <span class="icon has-text-warning mr-2" title="Pinned">
+                                                            <i class="fas fa-thumbtack"></i>
+                                                        </span>
+                                                    <?php elseif ($thread->locked): ?>
+                                                        <span class="icon has-text-danger mr-2" title="Locked">
+                                                            <i class="fas fa-lock"></i>
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="icon has-text-info mr-2">
+                                                            <i class="far fa-file-alt"></i>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                    
+                                                    <div>
+                                                        <a href="/forum/post/<?= $thread->thread_id ?>" class="title is-6 has-text-white" style="text-decoration: none;">
+                                                            <?= htmlspecialchars($thread->title) ?>
+                                                        </a>
+                                                        <div class="is-size-7 mt-1">
+                                                            <span class="tag is-dark is-rounded is-light" style="font-size: 0.65rem; height: 1.5em;"><?= htmlspecialchars($info['name']) ?></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-4">
+                                                <div class="media is-align-items-center">
+                                                    <div class="media-left mr-2">
                                                         <figure class="image is-32x32">
                                                             <canvas class="avatar-forum avatar-canvas"
                                                                     id="forum-avatar-<?php echo (int)$thread->thread_id; ?>-<?php echo (int)$thread->author; ?>"
@@ -317,31 +382,26 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
                                                         </figure>
                                                     </div>
                                                     <div class="media-content">
-                                                        <p class="title is-6">
-                                                            <a href="/forum/post/<?= $thread->thread_id ?>" class="has-text-white"><?= htmlspecialchars($thread->title) ?></a>
-                                                        </p>
-                                                        <p class="subtitle is-7">
+                                                        <a href="/user/<?= $thread->author ?>" class="has-text-weight-bold has-text-light is-size-7">
+                                                            <?= htmlspecialchars($thread->username) ?>
+                                                        </a>
+                                                        <div class="is-flex is-align-items-center">
                                                             <?php if ($thread->administrator >= 1): ?>
-                                                                <span class="tag is-danger is-small">Admin</span>
+                                                                <img src="/assets/images/badges/admin.png" alt="Admin" title="Administrator" style="height: 14px; margin-right: 2px;">
                                                             <?php endif; ?>
                                                             <?php if ($thread->premium >= 1): ?>
-                                                                <span class="tag is-warning is-small">Premium</span>
+                                                                <img src="/assets/images/badges/premium.png" alt="Premium" title="Premium Member" style="height: 14px; margin-right: 2px;">
                                                             <?php endif; ?>
-                                                            <?php if ($thread->expire + 300 > time()): ?>
-                                                                <span class="tag is-success is-small">Online</span>
-                                                            <?php endif; ?>
-                                                        </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="p-4">
-                                                <a href="/user/<?= $thread->author ?>" class="has-text-light"><?= htmlspecialchars($thread->username) ?></a>
+                                            <td class="p-4 has-text-centered">
+                                                <span class="tag is-primary is-light is-rounded"><?= number_format($thread->reply_count) ?></span>
+                                                <p class="is-size-7 has-text-grey mt-1"><?= number_format($thread->views) ?> views</p>
                                             </td>
-                                            <td class="p-4">
-                                                <span class="tag is-dark"><?= $thread->reply_count ?></span>
-                                            </td>
-                                            <td class="p-4">
-                                                <small class="has-text-grey-light"><?= timeAgo($thread->lastposttime) ?></small>
+                                            <td class="p-4 has-text-right">
+                                                <p class="is-size-7 has-text-grey-light"><?= timeAgo($thread->lastposttime) ?></p>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>

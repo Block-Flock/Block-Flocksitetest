@@ -133,6 +133,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
     ?>
     
     <script src="/assets/js/main.js?r=<?php echo bin2hex(random_bytes(16)); ?>" type="text/javascript"></script>
+    <script src="/assets/js/theme-toggle.js?r=<?php echo bin2hex(random_bytes(16)); ?>" type="text/javascript"></script>
     <script src="/assets/js/forum.js?r=<?php echo bin2hex(random_bytes(16)); ?>" type="text/javascript"></script>
     <script src="/assets/js/store.js?r=<?php echo bin2hex(random_bytes(16)); ?>" type="text/javascript"></script>
 

@@ -401,7 +401,18 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
             <div class="content-area">
                 <div class="columns">
                     <div class="column is-4">
-                        <h1 class="title is-3 has-text-white mb-2"><?= htmlspecialchars($gP->username); ?></h1>
+                        <h1 class="title is-3 has-text-white mb-2">
+                            <?= htmlspecialchars($gP->username); ?>
+                            <?php if (isset($gP->administrator) && $gP->administrator >= 1): ?>
+                                <img src="/assets/images/badges/admin.png" alt="Admin" title="Administrator" style="height: 24px; vertical-align: middle; margin-left: 5px;">
+                            <?php endif; ?>
+                            <?php if (isset($gP->premium) && $gP->premium >= 1): ?>
+                                <img src="/assets/images/badges/premium.png" alt="Premium" title="Premium Member" style="height: 24px; vertical-align: middle; margin-left: 5px;">
+                            <?php endif; ?>
+                            <?php if (isset($gP->prestige) && $gP->prestige >= 1): ?>
+                                <img src="/assets/images/badges/pres.png" alt="Prestige" title="Prestige Member" style="height: 24px; vertical-align: middle; margin-left: 5px;">
+                            <?php endif; ?>
+                        </h1>
                         <p class="subtitle is-6 has-text-grey-lighter mb-4">
                             "<?= !empty($gP->status) ? htmlspecialchars($gP->status) : 'No status set.'; ?>"
                         </p>

@@ -23,6 +23,7 @@ $app->checkAuth(true);
                     </ul>
                     <p class="menu-label mt-4">Other</p>
                     <ul class="menu-list">
+                        <li><a href="/user/settings/other/theme">Theme</a></li>
                         <li><a href="#">Billing</a></li>
                     </ul>
                 </aside>
