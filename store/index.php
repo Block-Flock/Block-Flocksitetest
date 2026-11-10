@@ -1,202 +1,219 @@
 <?php
+// 1. SETUP & CONFIGURATION
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
 
 $title = "Store";
+
+/* FIX: PHP must execute before string output */
+$extra_head_content = '
+<!-- Three.js Libraries for Avatar Rendering -->
+<script src="/assets/vendor/three.min.js"></script>
+<script src="/assets/vendor/GLTFLoader.js"></script>
+<script src="/assets/vendor/OBJLoader.js"></script>
+<link rel="stylesheet" href="/assets/css/shop.css?v=' . time() . '">
+';
+
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 
-/* ---------------------------
-   INPUT / STATE
----------------------------- */
+// Get current filters from URL
 $category = isset($_GET['category']) && is_numeric($_GET['category'])
     ? (int)$_GET['category']
     : null;
 
-$query = isset($_GET['query']) ? trim($_GET['query']) : '';
+$query = isset($_GET['query']) ? trim($_GET['query']) : null;
 $showAll = isset($_GET['showAll']) && $_GET['showAll'] === 'true';
 
-$isAdmin = $app->auth() && isset($my->admin) && $my->admin == 1;
+// Check if user is admin (FIX: guard $my)
+$isAdmin = $app->auth() && isset($my) && isset($my->admin) && $my->admin == 1;
 
-$placeholders = [
-    "🎩 Amazing Top Hat",
-    "🧢 Billy's Baseball Cap",
-    "👒 Flower Hat",
-    "👕 Polo",
-    "👚 Dress",
-    "🛠️ Handy Gear"
-];
-
-$categories = [
-    1 => ['name' => 'Hats', 'icon' => '🎩'],
-    2 => ['name' => 'Faces', 'icon' => '😀'],
-    3 => ['name' => 'Shirts', 'icon' => '👕'],
-    4 => ['name' => 'Pants', 'icon' => '👖'],
-    5 => ['name' => 'Gears', 'icon' => '🛠️'],
-    6 => ['name' => 'Accessories', 'icon' => '💎'],
-    7 => ['name' => 'Heads', 'icon' => '👤'],
-    8 => ['name' => 'T-Shirts', 'icon' => '👚']
-];
+// Function to get category name by ID
+function getCategoryName($type) {
+    $categories = [
+        1 => ['name' => 'Hats', 'icon' => '🎩'],
+        2 => ['name' => 'Faces', 'icon' => '😀'],
+        3 => ['name' => 'Shirts', 'icon' => '👕'],
+        4 => ['name' => 'Pants', 'icon' => '👖'],
+        5 => ['name' => 'Gears', 'icon' => '🛠️'],
+        6 => ['name' => 'Accessories', 'icon' => '💎'],
+        7 => ['name' => 'Heads', 'icon' => '👤'],
+        8 => ['name' => 'T-Shirts', 'icon' => '👚']
+    ];
+    return $categories[$type] ?? ['name' => 'Unknown', 'icon' => '❓'];
+}
 ?>
 
-<div class="col-2-12">
-    <div class="content shop-buttons">
+<section class="store-hero has-text-centered">
+    <div class="container">
+        <h1 class="title is-2">Marketplace</h1>
+        <h2 class="subtitle is-5">Discover items for your avatar</h2>
 
-        <div class="shop-button <?= !$category ? 'is-active' : '' ?>" data-category="">
-            All Items
-        </div>
-
-        <?php foreach ($categories as $id => $cat): ?>
-            <div class="shop-button <?= $category === $id ? 'is-active' : '' ?>"
-                 data-category="<?= $id ?>">
-                <?= $cat['icon'] ?> <?= $cat['name'] ?>
+        <div class="search-container">
+            <div class="field has-addons">
+                <div class="control is-expanded">
+                    <input
+                        class="input is-medium is-rounded"
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search items..."
+                        value="<?= htmlspecialchars($query ?? '') ?>">
+                </div>
+                <div class="control">
+                    <button class="button is-medium is-primary is-rounded" onclick="searchItems()">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
+                </div>
             </div>
-        <?php endforeach; ?>
+        </div>
+    </div>
+</section>
 
-        <?php if ($isAdmin): ?>
-            <div class="shop-button <?= $showAll ? 'is-active' : '' ?>"
-                 data-showall="true">
-                👁️ Show All Items
+<section class="section">
+    <div class="container">
+        <div class="columns">
+
+            <div class="column is-3">
+                <aside class="menu box p-4">
+
+                    <p class="menu-label"><b>Item Type</b></p>
+                    <ul class="menu-list">
+                        <li><a href="#" onclick="filterCategory(1);return false;" class="<?= $category === 1 ? 'is-active' : '' ?>">🎩 Hats</a></li>
+                        <li><a href="#" onclick="filterCategory(7);return false;" class="<?= $category === 7 ? 'is-active' : '' ?>">👤 Heads</a></li>
+                        <li><a href="#" onclick="filterCategory(6);return false;" class="<?= $category === 6 ? 'is-active' : '' ?>">💎 Accessories</a></li>
+                        <li><a href="#" onclick="filterCategory(2);return false;" class="<?= $category === 2 ? 'is-active' : '' ?>">😀 Faces</a></li>
+                        <li><a href="#" onclick="filterCategory(5);return false;" class="<?= $category === 5 ? 'is-active' : '' ?>">🛠️ Gears</a></li>
+                    </ul>
+
+                    <p class="menu-label mt-4"><b>User Creation</b></p>
+                    <ul class="menu-list">
+                        <li><a href="#" onclick="filterCategory(3);return false;" class="<?= $category === 3 ? 'is-active' : '' ?>">👕 Shirts</a></li>
+                        <li><a href="#" onclick="filterCategory(4);return false;" class="<?= $category === 4 ? 'is-active' : '' ?>">👖 Pants</a></li>
+                        <li><a href="#" onclick="filterCategory(8);return false;" class="<?= $category === 8 ? 'is-active' : '' ?>">👚 T-Shirts</a></li>
+                    </ul>
+
+                    <?php if ($isAdmin): ?>
+                        <p class="menu-label mt-4"><b>Admin Options</b></p>
+                        <ul class="menu-list">
+                            <li><a href="#" onclick="toggleShowAll();return false;" class="<?= $showAll ? 'is-active' : '' ?>">👁️ Show All Items</a></li>
+                            <li><a href="/admin/review-items.php">⚠️ Review Items</a></li>
+                        </ul>
+                    <?php endif; ?>
+
+                    <p class="menu-label mt-4"><b>Others</b></p>
+                    <ul class="menu-list">
+                        <li><a href="/store/creator-area/">Creator Area</a></li>
+                        <li><a href="#" onclick="resetFilters();return false;"><b>Reset Filters</b></a></li>
+                    </ul>
+                </aside>
             </div>
-            <a href="/admin/review-items.php" class="shop-button">
-                ⚠️ Review Items
-            </a>
-        <?php endif; ?>
 
-        <a href="/store/creator-area/" class="shop-button">Creator Area</a>
-        <div class="shop-button" data-reset="true"><b>Reset Filters</b></div>
-    </div>
-</div>
+            <div class="column is-9">
+                <div class="level mb-5">
+                    <h3 class="title is-4" id="categoryTitle">
+                        <?php
+                        if ($query) {
+                            echo 'Results for "' . htmlspecialchars($query) . '"';
+                        } elseif ($category) {
+                            $cat = getCategoryName($category);
+                            echo $cat['icon'] . ' ' . $cat['name'];
+                        } else {
+                            echo 'All Items';
+                        }
+                        ?>
+                        <?php if ($showAll && $isAdmin): ?>
+                            <span class="tag is-warning ml-2">
+                                Showing All (Including Unmoderated)
+                            </span>
+                        <?php endif; ?>
+                    </h3>
+                </div>
 
-<div class="col-10-12">
-    <div class="shop-search">
-        <input
-            id="searchInput"
-            class="search not-default width-100"
-            type="text"
-            placeholder="<?= $placeholders[array_rand($placeholders)] ?>"
-            value="<?= htmlspecialchars($query) ?>"
-        />
-    </div>
+                <div id="data">
+                    <div class="has-text-centered" style="padding:3rem;">
+                        <i class="fas fa-spinner fa-pulse fa-3x"></i>
+                        <p class="mt-3">Loading items...</p>
+                    </div>
+                </div>
+            </div>
 
-    <div class="search-results">
-        <div class="col-10-12 result">
-            <?php
-            if ($query) {
-                echo 'Results for "' . htmlspecialchars($query) . '"';
-            } elseif ($category && isset($categories[$category])) {
-                echo $categories[$category]['icon'] . ' ' . $categories[$category]['name'];
-            } else {
-                echo 'All Items';
-            }
-            ?>
-
-            <?php if ($showAll && $isAdmin): ?>
-                <span class="tag is-warning ml-2">
-                    Showing All (Including Unmoderated)
-                </span>
-            <?php endif; ?>
         </div>
     </div>
+</section>
 
-    <div class="item-container" id="data">
-        <div class="has-text-centered" style="padding:3rem;">
-            <i class="fas fa-spinner fa-pulse fa-3x"></i>
-            <p class="mt-3">Loading items…</p>
-        </div>
-    </div>
-</div>
-
+<script src="/assets/js/dashboard-avatars.js?v=<?= time() ?>"></script>
 <script>
-/* ---------------------------
-   CLIENT STATE
----------------------------- */
 let currentCategory = <?= $category ? $category : 'null' ?>;
 let currentQuery    = <?= json_encode($query) ?>;
 let currentShowAll  = <?= $showAll ? 'true' : 'false' ?>;
 let isAdmin         = <?= $isAdmin ? 'true' : 'false' ?>;
 
-/* ---------------------------
-   CORE FUNCTIONS
----------------------------- */
-function loadItems(page = 1) {
+window.onload = function () {
+    getItems(currentCategory ?? 1, 1, currentQuery, currentShowAll);
+};
+
+function getItems(id, page, query, showAll) {
     $.post('/api/store/get-items/', {
-        id: currentCategory,
-        page: page,
-        query: currentQuery || null,
-        showAll: currentShowAll
-    }).done(html => {
-        $('#data').html(html);
+        id: id,
+        page: page || 1,
+        query: query || null,
+        showAll: showAll || false
+    }).done(function (data) {
+        $('#data').html(data);
     });
+}
+
+function filterCategory(categoryId) {
+    currentCategory = categoryId;
+    updateActiveMenu();
+    getItems(categoryId, 1, currentQuery, currentShowAll);
+    updateURL();
+}
+
+function searchItems() {
+    currentQuery = document.getElementById('searchInput').value.trim();
+    getItems(currentCategory ?? 1, 1, currentQuery, currentShowAll);
+    updateURL();
+}
+
+function toggleShowAll() {
+    if (!isAdmin) return;
+    currentShowAll = !currentShowAll;
+    getItems(currentCategory ?? 1, 1, currentQuery, currentShowAll);
+    updateURL();
+}
+
+function resetFilters() {
+    currentCategory = null;
+    currentQuery = null;
+    currentShowAll = false;
+    document.getElementById('searchInput').value = '';
+    getItems(1, 1, null, false);
+    updateURL();
+    updateActiveMenu();
 }
 
 function updateURL() {
-    const params = new URLSearchParams();
-    if (currentCategory) params.set('category', currentCategory);
-    if (currentQuery) params.set('query', currentQuery);
-    if (currentShowAll) params.set('showAll', 'true');
-
-    history.pushState({}, '', '/store/' + (params.toString() ? '?' + params : ''));
+    let params = [];
+    if (currentCategory) params.push('category=' + currentCategory);
+    if (currentQuery) params.push('query=' + encodeURIComponent(currentQuery));
+    if (currentShowAll) params.push('showAll=true');
+    history.pushState({}, '', '/store/' + (params.length ? '?' + params.join('&') : ''));
 }
 
-function updateActiveButtons() {
-    document.querySelectorAll('.shop-button').forEach(btn => {
-        btn.classList.remove('is-active');
+function updateActiveMenu() {
+    document.querySelectorAll('.menu-list a').forEach(a => a.classList.remove('is-active'));
+    if (!currentCategory) return;
 
-        if (btn.dataset.category !== undefined &&
-            btn.dataset.category == (currentCategory ?? '')) {
-            btn.classList.add('is-active');
-        }
-
-        if (btn.dataset.showall && currentShowAll) {
-            btn.classList.add('is-active');
+    document.querySelectorAll('.menu-list a').forEach(a => {
+        if (a.getAttribute('onclick')?.includes('filterCategory(' + currentCategory + ')')) {
+            a.classList.add('is-active');
         }
     });
 }
 
-/* ---------------------------
-   EVENTS
----------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
-
-    document.querySelectorAll('.shop-button[data-category]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            currentCategory = btn.dataset.category || null;
-            updateActiveButtons();
-            loadItems();
-            updateURL();
-        });
-    });
-
-    document.querySelectorAll('.shop-button[data-showall]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (!isAdmin) return;
-            currentShowAll = !currentShowAll;
-            updateActiveButtons();
-            loadItems();
-            updateURL();
-        });
-    });
-
-    document.querySelectorAll('.shop-button[data-reset]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            currentCategory = null;
-            currentQuery = '';
-            currentShowAll = false;
-            document.getElementById('searchInput').value = '';
-            updateActiveButtons();
-            loadItems();
-            updateURL();
-        });
-    });
-
     document.getElementById('searchInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            currentQuery = e.target.value.trim();
-            loadItems();
-            updateURL();
-        }
+        if (e.key === 'Enter') searchItems();
     });
-
-    loadItems();
 });
 </script>
 
