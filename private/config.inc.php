@@ -336,7 +336,7 @@ $app = new app($AUTH);
     $getBansCount->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
     $getBansCount->execute();
     
-    if($getBansCount->rowCount() >= 1 && $_SERVER['SCRIPT_NAME'] != '/user/banned/index.php' && $_SERVER['SCRIPT_NAME'] != '/api/auth/logout') {
+    if($getBansCount->rowCount() >= 1 && $_SERVER['SCRIPT_NAME'] != '/user/banned/index.php' && $_SERVER['SCRIPT_NAME'] != '/api/auth/logout/index.php') {
         //die($_SERVER['SCRIPT_NAME']);
         header('Location: /user/banned');
         die;

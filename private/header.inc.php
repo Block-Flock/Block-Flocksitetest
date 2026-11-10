@@ -139,7 +139,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
 
     <?php if(isset($app) && $app->auth()) { ?>
         <script src="/assets/js/chat.js?r=<?php echo bin2hex(random_bytes(16)); ?>" type="text/javascript"></script>
-        <script src="/assets/js/misc/logout.js?r=<?php echo bin2hex(random_bytes(16)); ?>" type="text/javascript"></script>
     <?php } ?>
 
     <?php if(isset($title) && isset($asset)) { ?>
