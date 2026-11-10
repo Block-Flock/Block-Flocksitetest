@@ -276,53 +276,7 @@ JS;
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
-<style>
-    .dashboard-wrapper {
-        --primary-dark: #0f1419;
-        --secondary-dark: #1a1f2e;
-        --tertiary-dark: #252d3f;
-        --accent-purple: #6c5ce7;
-        --accent-blue: #4a90e2;
-        --text-primary: #ffffff;
-        --text-secondary: #a0aec0;
-        --text-muted: #718096;
-        --border-color: #2d3748;
-        --success-color: #23d160;
-        --danger-color: #ff3860;
-        --warning-color: #ffdd57;
-        --info-color: #209cee;
-        --card-bg: linear-gradient(135deg, #1a1f2e 0%, #252d3f 100%);
-        --avatar-bg: radial-gradient(circle at center, #252d3f 0%, #1a1f2e 100%);
-    }
-    
-    .avatar-container { position: relative; display: inline-block; border-radius: 12px; overflow: hidden; background: var(--avatar-bg); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); padding: 0; }
-    .avatar-main { display: block; width: 100%; max-width: 280px; height: auto; aspect-ratio: 1; border-radius: 12px; }
-    .avatar-friend-container, .avatar-status-container { position: relative; width: 50px; height: 50px; border-radius: 10px; overflow: hidden; background: var(--avatar-bg); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); flex-shrink: 0; }
-    .avatar-canvas, .avatar-user, .avatar-friend, .avatar-status { display: block; width: 100%; height: 100%; background: var(--avatar-bg); }
-    .avatar-status-indicator { position: absolute; bottom: 4px; right: 4px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--secondary-dark); z-index: 10; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
-    .avatar-status-online { background-color: var(--success-color); box-shadow: 0 0 12px rgba(35, 209, 96, 0.6); animation: pulse-online 2s infinite; }
-    .avatar-status-offline { background-color: var(--text-muted); box-shadow: 0 0 8px rgba(113, 128, 150, 0.4); }
-    .activity-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); }
-    .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-    .status-online { background-color: var(--success-color); box-shadow: 0 0 8px rgba(35, 209, 96, 0.5); animation: pulse-online 2s infinite; }
-    .status-offline { background-color: var(--text-muted); }
-    .friends-list { max-height: 400px; overflow-y: auto; }
-    .friend-item { padding: 12px; border-bottom: 1px solid var(--border-color); transition: all 0.2s ease; border-radius: 8px; margin-bottom: 4px; }
-    .friend-item:hover { background-color: rgba(108, 92, 231, 0.1); transform: translateX(4px); }
-    .friend-item:last-child { border-bottom: none; }
-    .friend-username { font-weight: 600; color: var(--text-primary); text-decoration: none; transition: color 0.2s ease; }
-    .friend-username:hover { color: var(--accent-purple); }
-    .friend-status { font-size: 0.8rem; color: var(--text-secondary); }
-    .box { background: var(--card-bg); border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); border-radius: 12px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .box:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); }
-    .status-item { margin-bottom: 16px; }
-    @keyframes pulse-online { 0% { box-shadow: 0 0 0 0 rgba(35, 209, 96, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(35, 209, 96, 0); } 100% { box-shadow: 0 0 0 0 rgba(35, 209, 96, 0); } }
-    .novello-title { color: var(--accent-purple); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
-    .username { color: var(--accent-purple); font-weight: 600; transition: color 0.2s ease; }
-    .username:hover { color: var(--accent-blue); }
-    .button.is-info { background-color: var(--accent-purple); border-color: var(--accent-purple); transition: all 0.2s ease; }
-    .button.is-info:hover { background-color: var(--accent-blue); border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
-</style>
+<link rel="stylesheet" href="/assets/css/dashboard.css">
 
 <section class="section dashboard-wrapper">
     <div class="container">

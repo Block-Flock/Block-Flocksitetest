@@ -238,7 +238,7 @@ $pastUsernames->execute([$id]);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($gP->username); ?>'s Profile - Avatoria</title>
     
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/app23.css">
     <link rel="stylesheet" href="/assets/buefy2.css">
     <link rel="stylesheet" href="/assets/bulma-divider.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">

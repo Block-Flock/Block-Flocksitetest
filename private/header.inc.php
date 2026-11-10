@@ -32,7 +32,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
         'animate' => ['/assets/css/animate.css', 'https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css'],
         'hover' => ['/assets/css/hover.css', 'https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css'],
         'bulma-tooltip' => ['/assets/css/bulma-tooltip.css', 'https://cdn.jsdelivr.net/npm/bulma-tooltip@3.0.2/dist/css/bulma-tooltip.min.css'],
-        'all2' => ['/assets/css/all2.css', 'https://your-secure-cdn.com/all2.css'], // Replace with your actual CSS CDN
+
         'app23' => ['/assets/css/app23.css', 'https://your-secure-cdn.com/app23.css'], // Replace with your actual CSS CDN
         'bulma' => ['/assets/css/bulma.min.css', 'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css'],
         'bulma-extensions' => ['/assets/css/bulma-extensions.min.css', 'https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css'],

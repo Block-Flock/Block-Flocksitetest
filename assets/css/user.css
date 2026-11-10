@@ -1,0 +1,409 @@
+/* --- Variables & Base Styles --- */
+:root {
+    --primary-color-start: #667eea;
+    --primary-color-end: #764ba2;
+    --primary-gradient: linear-gradient(135deg, var(--primary-color-start) 0%, var(--primary-color-end) 100%);
+    
+    --dark-bg-start: #1e3c72;
+    --dark-bg-end: #2a5298;
+    --dark-background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
+
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    --card-bg-light: rgba(255, 255, 255, 0.95);
+    --card-bg-dark: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background: var(--dark-background);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #f5f5f5; /* Ensure all text has good contrast against the dark background */
+}
+
+/* --- Main Layout and Containers --- */
+.profile-container {
+    background: var(--card-bg-dark);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: var(--card-shadow);
+    margin: 2rem 0;
+    overflow: hidden;
+    color: #363636; /* Default text color for inside the container */
+}
+
+/* --- Profile Header and Avatar --- */
+.profile-header {
+    background: var(--primary-gradient);
+    padding: 3rem 2rem; /* Increased vertical padding for more presence */
+    position: relative;
+    overflow: hidden;
+    color: white; /* Ensure header content is white */
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Cleaned up the SVG data URL for better maintainability */
+    background: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.1"><polygon points="1000,100 1000,0 0,100"/></svg>');
+    background-size: cover;
+    z-index: 1;
+}
+
+.profile-header .has-text-centered > * {
+    position: relative;
+    z-index: 2; /* Ensure content is above the overlay */
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.avatar-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid white; /* Slightly thicker border */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatar-image:hover {
+    transform: scale(1.05);
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 5px; /* Adjusted position */
+    right: 5px; /* Adjusted position */
+    width: 28px; /* Slightly larger */
+    height: 28px; /* Slightly larger */
+    border-radius: 50%;
+    border: 4px solid white; /* Thicker border for better visibility */
+}
+
+.online-indicator.online {
+    background: #23d160;
+    box-shadow: 0 0 12px rgba(35, 209, 96, 0.8);
+}
+
+.online-indicator.offline {
+    background: #dbdbdb;
+}
+
+.username-title {
+    font-size: 2.5rem;
+    font-weight: 800; /* Bolder font */
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
+    margin: 0.5rem 0;
+}
+
+.user-blurb {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+/* --- Card Components (General) --- */
+.profile-card {
+    background: var(--card-bg-light);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-3px); /* Less aggressive lift */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Action Buttons --- */
+.action-button {
+    border-radius: 50px; /* More pill-shaped */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    margin: 0.5rem 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Statistics Card (Distinctive styling) --- */
+.stats-card {
+    background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); /* New, distinct gradient for stats */
+    color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stats-card .title {
+    color: white;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 0.5rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 1.05rem;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+/* --- Status Box --- */
+.status-box {
+    background: linear-gradient(135deg, #3498db, #2980b9); /* New, professional blue gradient */
+    color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.status-box .title {
+    color: white;
+}
+
+/* Shimmer effect for status box (kept for flair) */
+.status-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+    pointer-events: none;
+}
+
+.status-box:hover::before {
+    left: 100%;
+}
+
+/* --- Ban Warning --- */
+.ban-warning {
+    background: linear-gradient(135deg, #e74c3c, #c0392b); /* Stronger red gradient */
+    color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    animation: pulse 2s infinite;
+    font-weight: 600;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.9; } /* Subtle pulse */
+    100% { opacity: 1; }
+}
+
+/* --- Achievements and Badges --- */
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* Increased gap */
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.achievement-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem; /* Slightly larger icon */
+    color: white;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.achievement-badge:hover {
+    transform: scale(1.15); /* More noticeable hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.achievement-badge.admin {
+    background: linear-gradient(135deg, #f39c12, #e67e22); /* Gold/Orange */
+}
+
+.achievement-badge.premium {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad); /* Royal Purple */
+}
+
+.achievement-badge.prestige {
+    background: linear-gradient(135deg, #34495e, #2c3e50); /* Darker/Sleeker */
+}
+
+/* --- Sidebar (Menu) --- */
+.sidebar {
+    background: var(--card-bg-light);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.menu-label {
+    color: #555; /* Slightly softer color */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+.menu-list a {
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    color: #4a4a4a;
+}
+
+.menu-list a:hover {
+    background: var(--primary-gradient);
+    color: white;
+    transform: translateX(3px); /* Subtle shift */
+}
+
+.menu-list a.is-active {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+/* --- Friends Preview --- */
+.friends-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Use auto-fit for better responsiveness */
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.friend-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color-start);
+    transition: transform 0.3s ease;
+    object-fit: cover;
+}
+
+.friend-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Customization Panel --- */
+.customization-panel {
+    background: rgba(44, 62, 80, 0.95); /* Darker, more control-panel look */
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 1rem 0;
+    display: none;
+    box-shadow: var(--card-shadow);
+}
+
+.customization-panel.active {
+    display: block;
+}
+
+.color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.color-option {
+    width: 45px; /* Slightly larger */
+    height: 45px;
+    border-radius: 50%;
+    border: 4px solid transparent; /* Thicker transparent border */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.color-option:hover,
+.color-option.active {
+    border-color: #f1c40f; /* Yellow highlight */
+    transform: scale(1.1);
+}
+
+/* Profile owner controls (Fixed Button) */
+.profile-owner-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.customize-btn {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px; /* Adjusted padding */
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    font-weight: 600;
+}
+
+.customize-btn:hover {
+    transform: scale(1.05);
+}
+
+/* --- Media Queries --- */
+@media (max-width: 768px) {
+    .profile-container {
+        margin: 1rem;
+        border-radius: 15px;
+    }
+    
+    .profile-header {
+        padding: 2rem 1rem;
+    }
+
+    .username-title {
+        font-size: 1.8rem;
+    }
+    
+    .avatar-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .online-indicator {
+        width: 20px;
+        height: 20px;
+    }
+}

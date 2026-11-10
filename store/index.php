@@ -10,6 +10,7 @@ $extra_head_content = '
 <script src="/assets/vendor/three.min.js"></script>
 <script src="/assets/vendor/GLTFLoader.js"></script>
 <script src="/assets/vendor/OBJLoader.js"></script>
+<link rel="stylesheet" href="/assets/css/shop.css?v=<?php echo time(); ?>">
 ';
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
@@ -37,119 +38,6 @@ function getCategoryName($type) {
     return $categories[$type] ?? ['name' => 'Unknown', 'icon' => '❓'];
 }
 ?>
-
-<style>
-    .store-hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 4rem 1.5rem;
-        border-radius: 0 0 20px 20px;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .store-hero .title { color: white; margin-bottom: 0.5rem; }
-    .store-hero .subtitle { color: #e0e0e0; margin-bottom: 2rem; }
-    
-    .search-container {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .menu-list a {
-        border-radius: 8px;
-        transition: all 0.2s;
-    }
-    .menu-list a.is-active {
-        background-color: #764ba2;
-        box-shadow: 0 4px 10px rgba(118, 75, 162, 0.4);
-        color: white !important;
-    }
-    .menu-list a:hover:not(.is-active) {
-        background-color: rgba(255, 255, 255, 0.05);
-        transform: translateX(5px);
-    }
-
-    .store-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .item-card {
-        height: 100%;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-    .item-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        background: rgba(255, 255, 255, 0.08);
-        border-color: #764ba2;
-    }
-    .item-card-image {
-        position: relative;
-        aspect-ratio: 1;
-        background: rgba(0, 0, 0, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .item-card-content {
-        padding: 1rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    .price-tag {
-        background-color: #23d160;
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 0.9rem;
-        display: inline-block;
-    }
-    .unmoderated-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #ff9800;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        z-index: 10;
-    }
-    .canvas-container canvas {
-        max-width: 100%;
-        max-height: 100%;
-        display: block;
-    }
-    .text-truncate {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-    }
-    .category-icon {
-        margin-right: 8px;
-        font-size: 1.2em;
-    }
-    .admin-controls {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-</style>
-
 <section class="store-hero has-text-centered">
     <div class="container">
         <h1 class="title is-2">Marketplace</h1>
@@ -174,7 +62,7 @@ function getCategoryName($type) {
     <div class="container">
         <div class="columns">
             <div class="column is-3">
-                <aside class="menu box glass-box p-4">
+                <aside class="menu box p-4">
                     <p class="menu-label"><b>Item Type</b></p>
                     <ul class="menu-list">
                         <li><a href="#" onclick="filterCategory(1); return false;" class="<?= $category == 1 ? 'is-active' : '' ?>">🎩 Hats</a></li>

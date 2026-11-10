@@ -50,7 +50,7 @@ if($AUTH && $_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['csrf']) && $_
         $successMessage = 'You have successfully changed your password. For security reasons, you have been signed out.';
         $_SESSION['JumpToTab'] = 'password';
         
-        die("success")
+        die("success");
         
     }
 }

@@ -23,7 +23,7 @@ if (!isset($_SESSION['id'])) { // Assuming $AUTH matches session check or variab
 // CAPTURE CSS & JS FOR HEADER
 ob_start();
 ?>
-<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/app23.css">
 <link rel="stylesheet" href="/assets/buefy2.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
