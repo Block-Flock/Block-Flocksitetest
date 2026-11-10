@@ -117,7 +117,7 @@ $displayMsg = ($numReqMessage > 9) ? "9+" : $numReqMessage;
     </div>
 </nav>
 
-<div style="height: 90px;"></div>
+
 
 <div class="modal" id="globalModal">
     <div class="modal-background"></div>
