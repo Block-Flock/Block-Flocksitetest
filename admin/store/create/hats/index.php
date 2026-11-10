@@ -49,7 +49,7 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
         $insert = $db->prepare('INSERT INTO store_items (`name`, about, creator, `type`, price, offsale, moderation, `image`, timeupdated, timecreated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $insert->bindValue(1, $name, PDO::PARAM_STR);
         $insert->bindValue(2, $description, PDO::PARAM_STR);
-        $insert->bindValue(3, '1', PDO::PARAM_INT);
+        $insert->bindValue(3, $_SESSION['id'], PDO::PARAM_INT);
         $insert->bindValue(4, '1', PDO::PARAM_INT); // Type 1 for Hats
         $insert->bindValue(5, $_POST['price'], PDO::PARAM_INT);
         $insert->bindValue(6, ($_POST['price'] == -1) ? '1' : '0', PDO::PARAM_INT);
@@ -61,7 +61,7 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
 
         $id = $db->lastInsertId();
 
-        $db->prepare('UPDATE store_items SET obj = ?, texture = ? WHERE id = ?')->execute([$id, $id, $id]);
+        $db->prepare('UPDATE store_items SET obj = ?, texture = ? WHERE id = ?')->execute([$id . '.obj', $id . '.png', $id]);
 
         $invinsert = $db->prepare('INSERT INTO user_inventory (user, item, timebought) VALUES (?, ?, ?)');
         $invinsert->execute([$_SESSION['id'], $id, time()]);
@@ -71,9 +71,10 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
         // Define correct rendering path
         $renderPath = $_SERVER['DOCUMENT_ROOT'].'/JGFJFSHFSAH/core/rendering/hat/'.$id;
 
-        if(move_uploaded_file($_FILES['image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'].'/assets/images/store/'.$Hash.'.png')) {
+        $storeImagePath = $_SERVER['DOCUMENT_ROOT'].'/assets/images/store/'.$Hash.'.png';
+        if(move_uploaded_file($_FILES['image']['tmp_name'], $storeImagePath)) {
             if (!file_exists($renderPath)) {
-                mkdir($renderPath, 0777, true);
+                $mkdir_res = mkdir($renderPath, 0777, true);
             }
 
             if(move_uploaded_file($_FILES['obj']['tmp_name'], $renderPath.'/'.$id.'.obj')) {
