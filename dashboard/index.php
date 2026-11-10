@@ -294,7 +294,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
             <div class="column is-3">
                 <div class="novello-title is-size-5 mb-4">Dashboard</div>
                 <div class="box has-text-centered">
-                    <div class="avatar-container" style="margin: 0 auto;">
+                    <div class="avatar-container">
                         <?php 
                             $myAvatarData = getAvatarData($my->id, $userColors, $userWearables); 
                             // DEBUG: Log avatar data for troubleshooting
