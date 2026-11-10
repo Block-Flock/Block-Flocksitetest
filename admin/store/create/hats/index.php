@@ -1,12 +1,18 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $title = 'Admin Control Panel';
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/header.inc.php');
 
 if(!$AUTH) {
+    echo "Debug: Not Authenticated (AUTH is false)";
     die();
 }
 
 if($AUTH && $my->administrator < 2) {
+    echo "Debug: Insufficient Privileges. User Level: " . $my->administrator . " (Required: 2)";
     die();
 } 
 
