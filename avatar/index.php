@@ -186,6 +186,7 @@ $extra_head_content = ob_get_clean();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="/assets/js/dashboard-avatars.js"></script>
 <?php
 
 // 1. Security Checks - Redone after header include to ensure $AUTH is available
@@ -1273,13 +1274,40 @@ $avatarConfig = [
 
                         const div = document.createElement('div');
                         div.className = `item-card ${isEquipped ? 'equipped' : ''}`;
+                        
+                        // JSON string for data-items attribute
+                        const itemData = {};
+                        if(category === 1) itemData.hats = [item.id];
+                        else if(category === 2) itemData.face = item.id;
+                        else if(category === 3) itemData.shirt = item.id;
+                        else if(category === 4) itemData.tshirt = item.id;
+                        else if(category === 5) itemData.pants = item.id;
+                        else if(category === 6) itemData.gear = item.id;
+                        else if(category === 7) itemData.accessory = item.id;
+
+                        const itemDataJson = JSON.stringify(itemData).replace(/"/g, '&quot;');
+
                         div.innerHTML = `
-                            <img src="/assets/images/store/${item.image}.png" class="item-image" onerror="this.src='/assets/images/store/default.png'">
+                            <canvas 
+                                data-user-id="${Config.userId}"
+                                data-render-type="item"
+                                data-item-type-focus="${category}"
+                                data-items="${itemDataJson}"
+                                width="100" height="100"
+                                class="item-image">
+                            </canvas>
                             <div class="is-size-7 has-text-weight-bold is-truncate">${item.name}</div>
                         `;
                         div.onclick = () => toggleItem(item.id, category, div);
                         container.appendChild(div);
                     });
+                    
+                    // Trigger 3D rendering for the new canvases
+                    setTimeout(() => {
+                        if (typeof initializeDashboardAvatars3D === 'function') {
+                            initializeDashboardAvatars3D();
+                        }
+                    }, 100);
                 } else {
                     container.innerHTML = '<div class="has-text-grey has-text-centered">You own no items in this category.</div>';
                 }
