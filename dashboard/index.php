@@ -1,6 +1,13 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
 
+// Fix: Ensure variables from init.inc.php/config.inc.php are available in this scope
+// This handles cases where the init file was already included in a different scope (e.g., global)
+if (!isset($db) && isset($GLOBALS['db'])) $db = $GLOBALS['db'];
+if (!isset($app) && isset($GLOBALS['app'])) $app = $GLOBALS['app'];
+if (!isset($my) && isset($GLOBALS['my'])) $my = $GLOBALS['my'];
+if (!isset($AUTH) && isset($GLOBALS['AUTH'])) $AUTH = $GLOBALS['AUTH'];
+
 $app->checkAuth(true);
 
 // ============================================================================
