@@ -4,33 +4,32 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 
 if(!$AUTH){
 	header("Location: /");
-die();
+    die();
 }
 
-if (!empty($_POST['csrf'])) {
-    if (hash_equals($_SESSION['CSRF-TOKEN'], $_POST['CSRF-TOKEN'])) {
-         // Proceed to process the form data
-    } else {
-         // Log this as a warning and keep an eye on these attempts
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($_POST['csrf']) || !hash_equals($_SESSION['CSRF-TOKEN'], $_POST['csrf'])) {
 		 echo"Seems like your request was invalid. Was this a mistake?";
 		 die();
     }
 }
 
-if(isset($_GET['code'])){
-	$code = htmlspecialchars($_GET['code']);
+$code = '';
+if(isset($_REQUEST['code'])){
+	$code = htmlspecialchars($_REQUEST['code']);
 }
-$verifyQuery = $db->prepare("SELECT * FROM `users` WHERE `username` = :username AND `verified` = 0");
-$verifyQuery->bindParam(":username", $my->id, PDO::PARAM_INT);
-$verifyQuery->execute();
-
-$verify = $verifyQuery->fetch(PDO::FETCH_OBJ);
 
 if($my->verified == 1){
 	echo"<center>Already verified</center>";
-die();
-	}
+    die();
+}
 	
+// Ensure we have a code to check
+if(empty($code)) {
+    echo "<center>No verification code provided.</center>";
+    die();
+}
+
 $verifyTokenSTMT = $db->prepare("SELECT * FROM `users` WHERE `emailVerifyCode` = :code AND `username` = :username");
 $verifyTokenSTMT->bindParam(":code", $code, PDO::PARAM_STR);
 $verifyTokenSTMT->bindParam(":username", $my->username, PDO::PARAM_STR);
@@ -46,20 +45,3 @@ if($verifyTokenSTMT->rowCount() > 0){
 	echo"<center>Incorrect code. Please try again.</center>";
 }
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

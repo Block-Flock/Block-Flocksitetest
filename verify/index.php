@@ -1,59 +1,41 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 $ignore = true;
-require($_SERVER['DOCUMENT_ROOT'] . "/private/config.inc.php");
-require $_SERVER['DOCUMENT_ROOT'] . '/PHPMailer/src/PHPMailer.php';
-require $_SERVER['DOCUMENT_ROOT'] . '/PHPMailer/src/SMTP.php';
-require $_SERVER['DOCUMENT_ROOT'] . '/PHPMailer/src/Exception.php';
+require_once($_SERVER['DOCUMENT_ROOT'] . "/private/init.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT'] . "/private/mailHandler.php");
+
 if(!$AUTH)
 {
   die(header("location: /log-in"));
 }
-if($my->email_verified == "1")
+
+if($my->verified == 1 || $my->email_verified == 1)
 {
   require($_SERVER['DOCUMENT_ROOT'] . "/errors/404.php");
   die();
 }
-if(!$verify)
-{
-  $verify = (array) $db->insert("email_verified", [
-    "id" => $my->id,
-    "uniq" => $db->uuid()
-  ]);
-  $reconfig = (array) $verify[0];
-  $reconfig['id'] = $verify['id'];
-  $verify = (object) $reconfig;
-  $message = "<center>";
-  $message .= "<img src='https://www.vertineer.com/vertineernew.png' alt='Vertineer logo'><br>";
-  $message .= "<h1>Verify your Vertineer! account.</h1><br>";
-  $message .= "<a class='button success' href='https://www.vertineer.com/verification/verify.php?id=$verify->uniq'>Click here to verify</a>";
-  $message .= "</center>";
-  $message .= "<center>Can't click the button? Here's the URL: https://www.vertineer.com/verification/verify.php?id=$verify->uniq<br>";
-  $message .= "Is this not your email? Change it on the website when verifying your account, or change it in your settings.<br>";
-  $message .= "<center><a href='https://www.vertineer.com/'>Landing</a> | <a href='https://www.vertineer.com/forum'>Forum</a> | <a href='https://www.vertineer.com/shop'>Shop</a> | <a href='https://www.vertineer.com/privacy/'>Privacy</a></center>";
-  //$db->mail($my->email, "Verify your Vertineer! account.", $message);
-  $mail = new PHPMailer(true);
-  $mail->isSMTP();
-  $mail->Host = 'smtp.gmail.com';
-  $mail->SMTPAuth = true;
-  $mail->Username = 'vertineerbusiness';
-  $mail->Password = 'studzyisaweeb';
-  $mail->SMTPSecure = 'ssl';
-  $mail->Port = 465;
-  $mail->setFrom('vertineerbusiness@gmail.com', 'Vertineer Game');
-  $mail->addReplyTo('vertineerbusiness@gmail.com', 'Vertineer Game');
-  $mail->addAddress($my->email, $my->username);
-  $mail->Subject = "Verify your Vertineer account.";
-  $mail->isHTML(true);
-  $mail->Body = "<a class='button success' href='https://www.vertineer.com/verification/verify.php?id=$verify->uniq'>Click here to verify</a>";
-  if($mail->send()) {
 
-  } else {
-    die("Message could not be sent, error: $mail->ErrorInfo");
-  }
+// Check if user has a verification code
+if(empty($my->emailVerifyCode)) {
+    $token = bin2hex(random_bytes(32));
+    $update = $db->prepare("UPDATE users SET emailVerifyCode = ? WHERE id = ?");
+    $update->bindValue(1, $token, PDO::PARAM_STR);
+    $update->bindValue(2, $my->id, PDO::PARAM_INT);
+    $update->execute();
+    
+    // Update local object
+    $my->emailVerifyCode = $token;
+    
+    // Send email
+    $verifyLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . "/api/account/verifyBackend.php?code=" . $token;
+    $message = "<center>";
+    $message .= "<h1>Verify your account</h1><br>";
+    $message .= "<a class='button success' href='" . $verifyLink . "'>Click here to verify</a>";
+    $message .= "<br><br>Or copy this code: <b>" . $token . "</b>";
+    $message .= "</center>";
+    
+    mailHandler::sendMail($my->email, "Verify your account", $message);
 }
+
 require($_SERVER['DOCUMENT_ROOT'] . "/private/header.inc.php");
 ?>
 <section class="section">
@@ -63,31 +45,20 @@ require($_SERVER['DOCUMENT_ROOT'] . "/private/header.inc.php");
             </div>
             <div class="column is-6">
             <div class="box">
-                        <form action="post">
-                    <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
-                        <div class='field'>
-                            <label class='label'>E-mail address</label>
-							<p> An e-mail has been sent to <b><?php echo $my->email;?></b>, the e-mail contains a verification code. Enter that code to activate your account.</p>
-                                <input type='text' name="code" class='input' placeholder="Enter your e-mail address">
-							                        </div>
-                        <div class='field'>
-                            <button type='submit' name="verify" class='button is-info'>Submit</button>
-</div>
-</form>
+                <form action="/api/account/verifyBackend.php" method="POST">
+                    <input type="hidden" name="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                    <div class='field'>
+                        <label class='label'>Verification Code</label>
+                        <p> An e-mail has been sent to <b><?php echo htmlspecialchars($my->email);?></b>, the e-mail contains a verification code. Enter that code to activate your account.</p>
+                        <input type='text' name="code" class='input' placeholder="Enter verification code">
+                    </div>
+                    <div class='field'>
+                        <button type='submit' name="verify" class='button is-info'>Submit</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<?php require_once($_SERVER['DOCUMENT_ROOT'] . "/private/footer.inc.php"); ?>

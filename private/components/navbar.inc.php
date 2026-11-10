@@ -127,7 +127,7 @@ $displayMsg = ($numReqMessage > 9) ? "9+" : $numReqMessage;
             <button class="delete mclose" aria-label="close"></button>
         </header>
         <section class="modal-card-body" id="globalModalContent"></section>
-        <footer class="modal-card-foot justify-content-end">
+        <footer class="modal-card-foot justify-content-end" id="globalModalFooter">
             <button class="button mclose">Close</button>
         </footer>
     </div>

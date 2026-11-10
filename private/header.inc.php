@@ -235,7 +235,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/components/navbar.inc.php');
                         <div class="container">
                             <div class="box has-background-info has-text-centered">
                                 <p><b>Looks like you have not verified your account yet on this website! Please click the button below to complete verification.</b></p>
-                                <a class="button is-link" href="https://bricktaria.com/api/account/verify.php">Verify now</a>
+                                <a class="button is-link" href="/verify">Verify now</a>
                             </div>
                         </div>
                     </div>
