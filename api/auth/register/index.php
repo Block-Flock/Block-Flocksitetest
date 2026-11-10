@@ -119,9 +119,7 @@ else if(empty($errors)) {
     $id = $db->lastInsertId();
     $_SESSION['id'] = $id;
 
-    $verificationLink = "https://bricktaria.com/verify?token=" . $token;
-    $emailBody = "Welcome to Bricktaria! Please click the link below to verify your account: <br><a href='$verificationLink'>$verificationLink</a>";
-    mailHandler::sendMail($email, "Verify your account", $emailBody);
+    mailHandler::sendMail($email, "Verify your account", "Your verification code is: " . $token);
 
     // Create default user colors
     $insertColors = $db->prepare('INSERT INTO user_colors (user, head, torso, left_arm, right_arm, left_leg, right_leg) VALUES (?, ?, ?, ?, ?, ?, ?)');

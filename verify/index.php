@@ -28,13 +28,13 @@ if(!$verify)
   $message = "<center>";
   $message .= "<img src='https://www.vertineer.com/vertineernew.png' alt='Vertineer logo'><br>";
   $message .= "<h1>Verify your Vertineer! account.</h1><br>";
-  $message .= "<a class='button success' href='https://www.vertineer.com/verify/?token=$verify->uniq'>Click here to verify</a>";
+  $message .= "<a class='button success' href='https://www.vertineer.com/verification/verify.php?id=$verify->uniq'>Click here to verify</a>";
   $message .= "</center>";
-  $message .= "<center>Can't click the button? Here's the URL: https://www.vertineer.com/verify/?token=$verify->uniq<br>";
+  $message .= "<center>Can't click the button? Here's the URL: https://www.vertineer.com/verification/verify.php?id=$verify->uniq<br>";
   $message .= "Is this not your email? Change it on the website when verifying your account, or change it in your settings.<br>";
   $message .= "<center><a href='https://www.vertineer.com/'>Landing</a> | <a href='https://www.vertineer.com/forum'>Forum</a> | <a href='https://www.vertineer.com/shop'>Shop</a> | <a href='https://www.vertineer.com/privacy/'>Privacy</a></center>";
   //$db->mail($my->email, "Verify your Vertineer! account.", $message);
-  $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+  $mail = new PHPMailer(true);
   $mail->isSMTP();
   $mail->Host = 'smtp.gmail.com';
   $mail->SMTPAuth = true;
@@ -47,7 +47,7 @@ if(!$verify)
   $mail->addAddress($my->email, $my->username);
   $mail->Subject = "Verify your Vertineer account.";
   $mail->isHTML(true);
-  $mail->Body = "<a class='button success' href='https://www.vertineer.com/verify/?token=$verify->uniq'>Click here to verify</a>";
+  $mail->Body = "<a class='button success' href='https://www.vertineer.com/verification/verify.php?id=$verify->uniq'>Click here to verify</a>";
   if($mail->send()) {
 
   } else {
@@ -62,34 +62,32 @@ require($_SERVER['DOCUMENT_ROOT'] . "/private/header.inc.php");
             <div class="column is-3">
             </div>
             <div class="column is-6">
-                <div class="box">
-                    <p>An e-mail has been sent to <b><?php echo $my->email; ?></b>, the e-mail contains a verification link. Click that link to activate your account.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+            <div class="box">
+                        <form action="post">
+                    <input class="input" type="hidden" id="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                        <div class='field'>
+                            <label class='label'>E-mail address</label>
+							<p> An e-mail has been sent to <b><?php echo $my->email;?></b>, the e-mail contains a verification code. Enter that code to activate your account.</p>
+                                <input type='text' name="code" class='input' placeholder="Enter your e-mail address">
+							                        </div>
+                        <div class='field'>
+                            <button type='submit' name="verify" class='button is-info'>Submit</button>
+</div>
+</form>
 </section>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        if (token) {
-            const formData = new FormData();
-            formData.append('token', token);
-            formData.append('csrf', '<?= $_SESSION['CSRF-TOKEN']; ?>');
 
-            fetch('/api/account/verifyBackend.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector('.box').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.querySelector('.box').innerHTML = '<p>An error occurred during verification.</p>';
-            });
-        }
-    });
-</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
