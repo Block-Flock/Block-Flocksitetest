@@ -539,8 +539,10 @@ function tln_fixatts(
         $oldattvalue = $attvalue;
         tln_defang($attvalue);
         if ($attname == 'style' && $attvalue !== $oldattvalue) {
-            $attvalue = "idiocy";
-            $attary[$attname] = $attvalue;
+            // Check if it was just simple encoding or actual malicious stuff
+            // For now, let's just log it if we could.
+            // $attvalue = "idiocy";
+            // $attary[$attname] = $attvalue;
         }
         tln_unspace($attvalue);
 
@@ -777,9 +779,8 @@ function tln_fixstyle($body, $pos, $trans_image_path, $block_external_images)
                     '/binding/i',
                     '/include-source/i',
                     '/javascript/i',
-                    '/script/i',
-                    '/position/i');
-    $replace = Array('','idiocy', 'idiocy', 'idiocy', 'idiocy', 'idiocy', 'idiocy', '');
+                    '/script/i');
+    $replace = Array('','idiocy', 'idiocy', 'idiocy', 'idiocy', 'idiocy', 'idiocy');
     $contentNew = preg_replace($match, $replace, $contentTemp);
     if ($contentNew !== $contentTemp) {
         $content = $contentNew;
@@ -1094,7 +1095,6 @@ function HTMLFilter($body, $trans_image_path, $block_external_images = false)
                     "/binding/i",
                     "/behaviou*r/i",
                     "/include-source/i",
-                    '/position\s*:/i',
                     '/(\\\\)?u(\\\\)?r(\\\\)?l(\\\\)?/i',
                     '/url\s*\(\s*([\'"])\s*\S+script\s*:.*([\'"])\s*\)/si',
                     '/url\s*\(\s*([\'"])\s*mocha\s*:.*([\'"])\s*\)/si',
@@ -1103,7 +1103,6 @@ function HTMLFilter($body, $trans_image_path, $block_external_images = false)
                 ),
                 array(
                     "",
-                    "idiocy",
                     "idiocy",
                     "idiocy",
                     "idiocy",
