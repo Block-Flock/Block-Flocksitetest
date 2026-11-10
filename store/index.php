@@ -38,98 +38,217 @@ function getCategoryName($type) {
     return $categories[$type] ?? ['name' => 'Unknown', 'icon' => '❓'];
 }
 ?>
-<section class="store-hero has-text-centered">
-    <div class="container">
-        <h1 class="title is-2">Marketplace</h1>
-        <h2 class="subtitle is-5">Discover items for your avatar</h2>
-        
-        <div class="search-container">
-            <div class="field has-addons">
-                <div class="control is-expanded">
-                    <input class="input is-medium is-rounded" type="text" id="searchInput" placeholder="Search items..." value="<?php echo htmlspecialchars($query ?? ''); ?>">
-                </div>
-                <div class="control">
-                    <button class="button is-medium is-primary is-rounded" onclick="searchItems()">
-                        <i class="fas fa-search mr-2"></i> Search
-                    </button>
-                </div>
-            </div>
+<?php
+// PHP from user's snippet, adapted
+$ads = true; // Placeholder, not strictly used for display based on existing header
+$pageName = "Shop"; // Placeholder
+$placeholders = [ "🎩 Amazing Top Hat", "🧢 Billy's Baseball Cap", "👒 Flower Hat", "🐱 Something Hot", "🔨 Handy Man", "👚 Dress", "👕 Polo" ];
+
+$perPage = [12,24,36,48];
+$approval = [ 0 => "Only Approved", 2 => "Only Unapproved", 3 => "Only Declined", 1 => "All" ];
+$saleType = [ 1 => "On Sale", 2 => "Offsale",0 => "Both" ];
+$fields = [
+    "query" => "",
+    "category" => "threeo", // This will be overridden by existing $category if present
+    "sort" => "",
+    "creator" => "",
+    "min" => "",
+    "max" => "",
+    "page" => "1",
+    "perPage" => "",
+    "showVerified" => "",
+    "saleType" => "0"
+];
+$advancedFields = [
+    "showVerified",
+    "perPage",
+    "min",
+    "max",
+    "creator",
+    "saleType"
+];
+foreach ($fields as $filter => $value) {
+    if (isset($_GET[$filter])) {
+        if (is_string($_GET[$filter])) {
+            $fields[$filter] = htmlentities($_GET[$filter]);
+        }
+    }
+}
+// Override $fields["query"] and $fields["category"] with existing $query and $category
+if (!is_null($query)) {
+    $fields["query"] = htmlspecialchars($query);
+}
+if (!is_null($category)) {
+    // Map existing numeric categories to "threeo" or "all" if necessary, or keep numeric
+    // For now, let's keep it numeric and use the existing getCategoryName function for display
+    $fields["category"] = $category;
+}
+// If showAll is true, set showVerified to "All" (1)
+if ($showAll) {
+    $fields["showVerified"] = 1;
+}
+
+$advanced = false;
+foreach ($advancedFields as $filter) {
+    if (!empty(trim($fields[$filter]))) {
+        $advanced = true;
+        break;
+    }
+}
+?>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({
+google_ad_client: "ca-pub-9016364683167219",
+enable_page_level_ads: true
+});
+</script>
+<script>
+    var defaultSearch = <?=json_encode($fields)?>;
+</script>
+<div class="col-2-12">
+	<div class="content shop-buttons">
+		<?php
+		// Using the categories from the original file, adapted to the new HTML structure
+		// The original categories in the user's snippet were static or from $bop->getCategories()
+		// I will use the existing getCategoryName function to populate buttons
+        // Also add an "All" button
+        ?>
+        <div class="shop-button" data-category="all">
+            All Items
         </div>
-    </div>
-</section>
-
-<section class="section">
-    <div class="container">
-        <div class="columns">
-            <div class="column is-3">
-                <aside class="menu box p-4">
-                    <p class="menu-label"><b>Item Type</b></p>
-                    <ul class="menu-list">
-                        <li><a href="#" onclick="filterCategory(1); return false;" class="<?= $category == 1 ? 'is-active' : '' ?>">🎩 Hats</a></li>
-                        <li><a href="#" onclick="filterCategory(7); return false;" class="<?= $category == 7 ? 'is-active' : '' ?>">👤 Heads</a></li>
-                        <li><a href="#" onclick="filterCategory(6); return false;" class="<?= $category == 6 ? 'is-active' : '' ?>">💎 Accessories</a></li>
-                        <li><a href="#" onclick="filterCategory(2); return false;" class="<?= $category == 2 ? 'is-active' : '' ?>">😀 Faces</a></li>
-                        <li><a href="#" onclick="filterCategory(5); return false;" class="<?= $category == 5 ? 'is-active' : '' ?>">🛠️ Gears</a></li>
-                    </ul>
-                    <p class="menu-label mt-4"><b>User Creation</b></p>
-                    <ul class="menu-list">
-                        <li><a href="#" onclick="filterCategory(3); return false;" class="<?= $category == 3 ? 'is-active' : '' ?>">👕 Shirts</a></li>
-                        <li><a href="#" onclick="filterCategory(4); return false;" class="<?= $category == 4 ? 'is-active' : '' ?>">👖 Pants</a></li>
-                        <li><a href="#" onclick="filterCategory(8); return false;" class="<?= $category == 8 ? 'is-active' : '' ?>">👚 T-Shirts</a></li>
-                    </ul>
-                    
-                    <?php if($isAdmin): ?>
-                    <p class="menu-label mt-4"><b>Admin Options</b></p>
-                    <ul class="menu-list">
-                        <li><a href="#" onclick="toggleShowAll(); return false;" class="<?= $showAll ? 'is-active' : '' ?>">👁️ Show All Items</a></li>
-                        <li><a href="/admin/review-items.php">⚠️ Review Items</a></li>
-                    </ul>
-                    <?php endif; ?>
-                    
-                    <p class="menu-label mt-4"><b>Others</b></p>
-                    <ul class="menu-list">
-                        <li><a href="/store/creator-area/">Creator Area</a></li>
-                        <li><a href="#" onclick="resetFilters(); return false;"><b>Reset Filters</b></a></li>
-                    </ul>
-                </aside>
-            </div>
-
-            <div class="column is-9">
-                <div class="level mb-5">
-                    <div class="level-left">
-                        <div class="level-item">
-                            <h3 class="title is-4" id="categoryTitle">
-                                <?php 
-                                if ($query) {
-                                    echo 'Results for "' . htmlspecialchars($query) . '"';
-                                } elseif ($category) {
-                                    $catInfo = getCategoryName($category);
-                                    echo $catInfo['icon'] . ' ' . $catInfo['name'];
-                                } else {
-                                    echo 'All Items';
-                                }
-                                ?>
-                                <?php if($showAll && $isAdmin): ?>
-                                    <span class="tag is-warning ml-2">Showing All (Including Unmoderated)</span>
-                                <?php endif; ?>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="data">
-                    <!-- Items will be loaded here via AJAX -->
-                    <div class="has-text-centered" style="padding: 3rem;">
-                        <span class="icon is-large">
-                            <i class="fas fa-spinner fa-pulse fa-3x"></i>
-                        </span>
-                        <p class="mt-3">Loading items...</p>
-                    </div>
-                </div>
-            </div>
+        <?php
+		$categories_list = [
+            1 => ['name' => 'Hats', 'icon' => '🎩'],
+            2 => ['name' => 'Faces', 'icon' => '😀'],
+            3 => ['name' => 'Shirts', 'icon' => '👕'],
+            4 => ['name' => 'Pants', 'icon' => '👖'],
+            5 => ['name' => 'Gears', 'icon' => '🛠️'],
+            6 => ['name' => 'Accessories', 'icon' => '💎'],
+            7 => ['name' => 'Heads', 'icon' => '👤'],
+            8 => ['name' => 'T-Shirts', 'icon' => '👚']
+        ];
+		foreach ($categories_list as $id => $catInfo) {
+		?>
+		<div class="shop-button <?= $category == $id ? 'is-active' : '' ?>" data-category="<?=$id?>">
+			<?=$catInfo['icon']?> <?=$catInfo['name']?>
+		</div>
+		<?php } ?>
+        <?php if($isAdmin): ?>
+        <div class="shop-button <?= $showAll ? 'is-active' : '' ?>" data-showall="true">
+            👁️ Show All Items
         </div>
-    </div>
-</section>
+        <a href="/admin/review-items.php" class="shop-button">⚠️ Review Items</a>
+        <?php endif; ?>
+        <a href="/store/creator-area/" class="shop-button">Creator Area</a>
+        <div class="shop-button" data-reset="true"><b>Reset Filters</b></div>
+	</div>
+</div>
+<div class="col-10-12">
+	<div class="col-11-12">
+		<div class="shop-search">
+			<input class="search not-default width-100" type="text" placeholder="<?=$placeholders[rand(0, count($placeholders) - 1)]?>" value="<?=$fields["query"]?>" id="searchInput" />
+			<div class="advanced" style="<?=($advanced) ? "" : "display:none"?>">
+				<div class="col-1-5">
+					Creator <br><input id="creator" class="not-default" type="text" value="<?=$fields["creator"]?>" />
+				</div>
+				<div class="col-1-5">
+					Min Price<br><input id="min" class="not-default" type="text" value="<?=$fields["min"]?>" />
+				</div>
+				<div class="col-1-5">
+					Max Price<br><input id="max" class="not-default" type="text" value="<?=$fields["max"]?>"/>
+				</div>
+				<div class="col-1-5">
+					Page<br><input id="page" class="not-default" type="text" value="<?=$fields["page"]?>"/>
+				</div>
+				<div class="col-1-5">
+					Per Page<br><select class="not-default" id="perPage">
+						<?php
+						foreach ($perPage as $option) {
+							$selected = ($option == $fields["perPage"]) ? "selected" : "";
+							?>
+							<option value="<?=$option?>" <?=$selected?>><?=$option?></option>
+							<?php
+						}
+						?>
+						</select>
+				</div>
+				<div class="col-1-5">
+					Approval Sort<br><select class="not-default" id="showApproved">
+					<?php
+						foreach ($approval as $option => $name) {
+							$selected = ($option == $fields["showVerified"]) ? "selected" : "";
+							?>
+							<option value="<?=$option?>" <?=$selected?>><?=$name?></option>
+							<?php
+						}
+					?>
+					</select>
+				</div>
+				<div class="col-1-5">
+					Sale Type Sort<br><select class="not-default" id="saleType">
+					<?php
+						foreach ($saleType as $option => $name) {
+							$selected = ($option == $fields["saleType"]) ? "selected" : "";
+							?>
+							<option value="<?=$option?>" <?=$selected?>><?=$name?></option>
+							<?php
+						}
+					?>
+					</select>
+				</div>
+				<div class="col-1-5">
+				</div>
+			</div>
+		</div>
+		<div class="search-results">
+            <div class="col-10-12 result" id="categoryTitle">
+                <?php
+                if ($query) {
+                    echo 'Results for "' . htmlspecialchars($query) . '"';
+                } elseif ($category) {
+                    $catInfo = getCategoryName($category);
+                    echo $catInfo['icon'] . ' ' . $catInfo['name'];
+                } else {
+                    echo 'All Items';
+                }
+                ?>
+                <?php if($showAll && $isAdmin): ?>
+                    <span class="tag is-warning ml-2">Showing All (Including Unmoderated)</span>
+                <?php endif; ?>
+            </div>
+            <div class="col-2-12" style="text-align:right;"><span class="cog-hover"><i class="fas fa-cog"></i> Advanced</span></div>
+        </div>
+		<div class="item-container" id="data">
+			<!-- Items will be loaded here via AJAX -->
+            <div class="has-text-centered" style="padding: 3rem;">
+                <span class="icon is-large">
+                    <i class="fas fa-spinner fa-pulse fa-3x"></i>
+                </span>
+                <p class="mt-3">Loading items...</p>
+            </div>
+		</div>
+		<div class="col-1-1" id="pageButtons">
+			<button style="float:left;display:inline;width:auto;display:none;" id="previousPage" class="shop-search-button"><i class="fas fa-chevron-left"></i> Previous Page</button>
+			<button style="float:right;display:inline;width:auto;display: none;" id="nextPage" class="shop-search-button">Next Page <i class="fas fa-chevron-right"></i></button>
+		</div>
+	</div>
+	<div class="col-1-12">
+		<button class="shop-search-button" tooltip="Search" onclick="searchItems()"><i class="fas fa-search"></i></button>
+		<div class="small-subtitle">CREATE</div>
+		<a href="/shop/create/"><button class="shop-search-button" tooltip="Create"><i class="fas fa-tshirt"></i><i class="fas fa-plus"></i></button></a>
+		<div class="small-subtitle">SORT</div>
+		<button class="shop-search-button tooltip" data-sort="expensive" title="Most Expensive"><i class="fas fa-dollar-sign"></i><i class="fas fa-level-up-alt"></i></button>
+		<button class="shop-search-button tooltip" data-sort="cheap" title="Least Expensive"><i class="fas fa-dollar-sign"></i><i class="fas fa-level-down-alt"></i></button>
+		<button class="shop-search-button tooltip" data-sort="most_bought" title="Most Bought"><i class="fas fa-money-bill"></i></button>
+		<button class="shop-search-button tooltip" data-sort="most_favorites" title="Most Favorited"><i class="fas fa-heart"></i></button>
+		<button class="shop-search-button tooltip" data-sort="most_favorites" title="On Most Wishlists"><i class="fas fa-list"></i></button>
+		<button class="shop-search-button tooltip" data-sort="" title="Remove Sort"><i class="fas fa-times"></i></button>
+		<div class="small-subtitle">OTHER</div>
+		<button class="shop-search-button tooltip" id="help" title="Help"><i class="fas fa-question"></i></button>
+		<button class="shop-search-button tooltip" id="copyLink" title="Copy Link"><i class="fas fa-link"></i></button>
+	</div>
+</div>
 
 <script src="/assets/js/dashboard-avatars.js?v=<?php echo time(); ?>"></script>
 <script>
