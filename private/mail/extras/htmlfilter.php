@@ -84,7 +84,7 @@ function tln_casenormalize(&$val)
 function tln_skipspace($body, $offset)
 {
     preg_match('/^(\s*)/s', substr($body, $offset), $matches);
-    if (sizeof($matches[1])) {
+    if (isset($matches[1]) && strlen($matches[1])) {
         $count = strlen($matches[1]);
         $offset += $count;
     }
@@ -574,7 +574,7 @@ function tln_fixatts(
                 $attary[$attname] = '"disallowed character"';
             }
             preg_match_all("/url\s*\((.+)\)/si", $attvalue, $aMatch);
-            if (count($aMatch)) {
+            if (isset($aMatch[1]) && count($aMatch[1])) {
                 foreach($aMatch[1] as $sMatch) {
                     $urlvalue = $sMatch;
                     tln_fixurl($attname, $urlvalue, $trans_image_path, $block_external_images);
@@ -752,7 +752,7 @@ function tln_fixstyle($body, $pos, $trans_image_path, $block_external_images)
 
     $content = preg_replace("/(\\\\)?u(\\\\)?r(\\\\)?l(\\\\)?/i", 'url', $content);
     preg_match_all("/url\s*\((.+)\)/si",$content,$aMatch);
-    if (count($aMatch)) {
+    if (isset($aMatch[1]) && count($aMatch[1])) {
         $aValue = $aReplace = array();
         foreach($aMatch[1] as $sMatch) {
             // url value
