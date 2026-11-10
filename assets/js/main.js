@@ -7,11 +7,11 @@ $(document).ready(function() {
 
   // Cookie agreement
   if ($.cookie('cookies_accepted') == undefined)
-    $.cookie('cookies_accepted', 'false', { expires: 1, path: '/' });
+    $.cookie('cookies_accepted', 'false', { expires: 365, path: '/' });
 
   $("#accept_cookie_banner").click(function() {
     $("#cookie_banner").remove();
-    $.cookie('cookies_accepted', 'true', { expires: 1, path: '/' });
+    $.cookie('cookies_accepted', 'true', { expires: 365, path: '/' });
   });
 
 
