@@ -1,6 +1,8 @@
 <?php
+error_log("Face create page loaded. POST: " . print_r($_POST, true));
 $title = 'Create Face';
 require_once($_SERVER['DOCUMENT_ROOT'].'/private/header.inc.php');
+
 
 if(!$AUTH || $my->administrator < 2) {
     header('Location: /');
@@ -148,4 +150,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
         </div>
     </div>
 </div>
+</div>
+</section>
 <?php require_once($_SERVER['DOCUMENT_ROOT'].'/private/footer.inc.php'); ?>

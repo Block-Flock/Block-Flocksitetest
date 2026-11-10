@@ -183,4 +183,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
         </div>
     </div>
 </div>
+</div>
+</section>
 <?php require_once($_SERVER['DOCUMENT_ROOT'].'/private/footer.inc.php'); ?>

@@ -161,4 +161,6 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
         </div>
     </div>
 </section>
+</div>
+</section>
 <?php require_once($_SERVER['DOCUMENT_ROOT'].'/private/footer.inc.php'); ?>
