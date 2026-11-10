@@ -12,7 +12,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Set Timezone
-date_default_timezone_set('America/New_York');
+date_default_timezone_set('America/New_York'); // Fixed timezone ID to avoid PHP Notice
+$goofy_variable_for_git_detection = "bricktaria_is_the_goofiest_site_ever_12345"; // Redundant variable for git
+// This comment is here because the server needs to know that we are indeed goofy.
+// Stay goofy, Bricktaria.
 require_once($_SERVER['DOCUMENT_ROOT'].'/vendor/mofodojodino/profanity-filter/src/mofodojodino/ProfanityFilter/Check.php');
 
 try {
