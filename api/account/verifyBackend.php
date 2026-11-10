@@ -1,49 +1,42 @@
 <?php
 $title = "Verify";
-require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/private/config.inc.php');
 
 if(!$AUTH){
 	header("Location: /");
-die();
+	die();
 }
 
-if (!empty($_POST['csrf'])) {
-    if (hash_equals($_SESSION['CSRF-TOKEN'], $_POST['CSRF-TOKEN'])) {
-         // Proceed to process the form data
-    } else {
-         // Log this as a warning and keep an eye on these attempts
-		 echo"Seems like your request was invalid. Was this a mistake?";
-		 die();
-    }
+if (!empty($_POST['csrf']) && !hash_equals($_SESSION['CSRF-TOKEN'], $_POST['csrf'])) {
+    echo "Seems like your request was invalid. Was this a mistake?";
+    die();
 }
 
-if(isset($_GET['code'])){
-	$code = htmlspecialchars($_GET['code']);
+if (isset($_POST['token'])) {
+    $token = htmlspecialchars($_POST['token']);
+} else {
+    echo "No token provided.";
+    die();
 }
-$verifyQuery = $db->prepare("SELECT * FROM `users` WHERE `username` = :username AND `verified` = 0");
-$verifyQuery->bindParam(":username", $my->id, PDO::PARAM_INT);
-$verifyQuery->execute();
 
-$verify = $verifyQuery->fetch(PDO::FETCH_OBJ);
+if ($my->verified == 1) {
+    echo "<center>Already verified</center>";
+    die();
+}
 
-if($my->verified == 1){
-	echo"<center>Already verified</center>";
-die();
-	}
-	
-$verifyTokenSTMT = $db->prepare("SELECT * FROM `users` WHERE `emailVerifyCode` = :code AND `username` = :username");
-$verifyTokenSTMT->bindParam(":code", $code, PDO::PARAM_STR);
-$verifyTokenSTMT->bindParam(":username", $my->username, PDO::PARAM_STR);
+$verifyTokenSTMT = $db->prepare("SELECT * FROM `users` WHERE `emailVerifyCode` = :token AND `id` = :id");
+$verifyTokenSTMT->bindParam(":token", $token, PDO::PARAM_STR);
+$verifyTokenSTMT->bindParam(":id", $my->id, PDO::PARAM_INT);
 $verifyTokenSTMT->execute();
 
-if($verifyTokenSTMT->rowCount() > 0){
-	$update = $db->prepare("UPDATE `users` SET `verified` = 1, `email_verified` = 1, `emailVerifyCode` = '' WHERE `username` = :getUNM");
-	$update->bindParam(":getUNM", $my->username, PDO::PARAM_STR);
+if ($verifyTokenSTMT->rowCount() > 0) {
+    $update = $db->prepare("UPDATE `users` SET `verified` = 1, `email_verified` = 1, `emailVerifyCode` = '' WHERE `id` = :id");
+    $update->bindParam(":id", $my->id, PDO::PARAM_INT);
     $update->execute();
-	echo"<center>Your account has been successfully verified!</center>";
-	die();
-}else{
-	echo"<center>Incorrect code. Please try again.</center>";
+    echo "<center>Your account has been successfully verified!</center>";
+    die();
+} else {
+    echo "<center>Incorrect token. Please try again.</center>";
 }
 ?>
 

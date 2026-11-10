@@ -55,7 +55,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
     }
     ?>
     
-    <style>
+    <link rel="stylesheet" href="/assets/css/shop.css">
+ 
+     <style>
         /* Thin, unobtrusive scrollbar for desktop browsers */
         html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
         ::-webkit-scrollbar { width: 10px; height: 10px; }

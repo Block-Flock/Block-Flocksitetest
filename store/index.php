@@ -38,125 +38,8 @@ function getCategoryName($type) {
 }
 ?>
 
-<style>
-    .store-hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 3rem 1.5rem;
-        border-radius: 0 0 20px 20px;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .store-hero .title { color: white; }
-    .store-hero .subtitle { color: #e0e0e0; }
-    
-    .menu-list a {
-        border-radius: 8px;
-        transition: all 0.2s;
-    }
-    .menu-list a.is-active {
-        background-color: #764ba2;
-        box-shadow: 0 4px 10px rgba(118, 75, 162, 0.4);
-        color: white !important;
-    }
-    .menu-list a:hover:not(.is-active) {
-        background-color: #f5f5f5;
-        transform: translateX(5px);
-    }
-
-    .item-card {
-        height: 100%;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: none;
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-    }
-    .item-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-    }
-    .price-tag {
-        background-color: #23d160;
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 0.9rem;
-        display: inline-block;
-    }
-    .unmoderated-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #ff9800;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        z-index: 10;
-    }
-    .canvas-container canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-
-        transform: translate(-50%, -50%);
-
-        max-width: 100%;
-        max-height: 100%;
-
-        width: auto !important;
-        height: auto !important;
-
-        display: block;
-    }
-    }
-    .canvas-container canvas {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-    .text-truncate {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-    }
-    .category-icon {
-        margin-right: 8px;
-        font-size: 1.2em;
-    }
-    .admin-controls {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid #eee;
-    }
-</style>
-
-<section class="store-hero has-text-centered">
-    <div class="container">
-        <h1 class="title is-2">Marketplace</h1>
-        <h2 class="subtitle is-5">Discover items for your avatar</h2>
-        
-        <div class="columns is-centered mt-4">
-            <div class="column is-6">
-                <div class="field has-addons">
-                    <div class="control is-expanded">
-                        <input class="input is-medium is-rounded" type="text" id="searchInput" placeholder="Search items..." value="<?php echo htmlspecialchars($query ?? ''); ?>">
-                    </div>
-                    <div class="control">
-                        <button class="button is-medium is-primary is-rounded" onclick="searchItems()">Search</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <section class="section">
-    <div class="container">
+    <div class="store-container">
         <div class="columns">
             <div class="column is-3">
                 <aside class="menu box p-4">
@@ -214,7 +97,7 @@ function getCategoryName($type) {
                     </div>
                 </div>
 
-                <div id="data">
+                <div id="data" class="item-grid">
                     <!-- Items will be loaded here via AJAX -->
                     <div class="has-text-centered" style="padding: 3rem;">
                         <span class="icon is-large">
