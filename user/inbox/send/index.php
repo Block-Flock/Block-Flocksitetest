@@ -10,7 +10,7 @@ if(!$AUTH) {
 }
 error_reporting(E_ALL & ~E_NOTICE);
 
-if(!$_GET['context']){
+if(empty($_GET['context'])){
  $context = htmlspecialchars('');
 }else{
  $context = htmlspecialchars($_GET['context']);

@@ -262,7 +262,7 @@ class Check
         $expression = '/' . preg_replace(
                 array_keys($characterExpressions),
                 array_values($characterExpressions),
-                $word
+                preg_quote($word, '/')
             ) . '/i';
 
         return str_replace(self::SEPARATOR_PLACEHOLDER, $separatorExpression, $expression);
@@ -273,7 +273,7 @@ class Check
         $expression = '/' . preg_replace(
                 array_keys($characterExpressions),
                 array_values($characterExpressions),
-                $word
+                preg_quote($word, '/')
             ) . '/i';
 
         return str_replace(self::SEPARATOR_PLACEHOLDER, $separatorExpression, $expression);
