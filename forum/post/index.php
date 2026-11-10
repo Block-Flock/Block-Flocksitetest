@@ -306,105 +306,237 @@ $extra_head_content .= '<style>
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
-<div class="container forum-container">
-    <div class="card">
-        <div class="top blue">
-            <div class="col-12-12"><?= htmlspecialchars($thread->title) ?></div>
-        </div>
-        <div class="content">
-            <!-- Original Post -->
-            <div class="post-info mb1">
-                <div class="col-3-12 center post-sidebar">
-                    <a href="/user/<?= $thread->author ?>" class="post-author-name"><?= htmlspecialchars($thread->username) ?></a>
-                    <div class="avatar-container mt1 mb1">
-                        <canvas class="avatar-post avatar-canvas"
-                                id="post-avatar-<?php echo (int)$thread->author; ?>-<?php echo (int)$id; ?>"
-                                width="100" height="100"
-                                data-user-id="<?php echo (int)$thread->author; ?>"
-                                data-render-type="avatar"
-                                data-colors='<?php echo htmlspecialchars(json_encode($threadAuthorAvatarData['colors']), ENT_QUOTES, 'UTF-8'); ?>'
-                                data-items='<?php echo htmlspecialchars(json_encode($threadAuthorAvatarData['items']), ENT_QUOTES, 'UTF-8'); ?>'
-                                data-hash="<?php echo htmlspecialchars($thread->avatar_hash); ?>">
-                        </canvas>
-                    </div>
-                    <?php if ($thread->administrator >= 1): ?>
-                        <div class="tag is-danger">Admin</div>
-                    <?php endif; ?>
-                </div>
-                <div class="col-9-12 post-main">
-                    <div class="post-date"><?= date('M j, Y g:i A', $thread->timemade) ?></div>
-                    <div class="post-content mt1">
-                        <?= nl2br(htmlspecialchars($thread->content)) ?>
-                    </div>
+<section class="hero is-small is-bold">
+    <div class="hero-body">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="/forum">Forum</a></li>
+                    <li><a href="/forum/topic/<?= $thread->subforum ?>"><?= htmlspecialchars($subforum['name']) ?></a></li>
+                    <li class="is-active"><a href="#" aria-current="page"><?= htmlspecialchars($thread->title) ?></a></li>
+                </ul>
+            </nav>
+            
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <h1 class="title"><?= htmlspecialchars($thread->title) ?></h1>
+                    <p class="subtitle is-6">
+                        Posted by <a href="/user/<?= $thread->author ?>"><?= htmlspecialchars($thread->username) ?></a> 
+                        <?= timeAgo($thread->timemade) ?>
+                        <?php if ($thread->pinned): ?>
+                            <span class="tag is-warning is-small">Pinned</span>
+                        <?php endif; ?>
+                        <?php if ($thread->locked): ?>
+                            <span class="tag is-danger is-small">Locked</span>
+                        <?php endif; ?>
+                    </p>
                 </div>
             </div>
-
-            <!-- Replies -->
-            <?php foreach ($repliesData as $reply): ?>
-                <?php 
-                $replyAvatarData = $replyAuthorsAvatarData[$reply->author] ?? [
-                    'colors' => [
-                        'head' => [1, 0.8, 0.6],
-                        'torso' => [0.2, 0.2, 0.8],
-                        'leftArm' => [1, 0.8, 0.6],
-                        'rightArm' => [1, 0.8, 0.6],
-                        'leftLeg' => [0.1, 0.1, 0.1],
-                        'rightLeg' => [0.1, 0.1, 0.1]
-                    ],
-                    'items' => [
-                        'hats' => [],
-                        'face' => 'default',
-                        'accessory' => 0,
-                        'tshirt' => 0,
-                        'shirt' => 0,
-                        'pants' => 0,
-                        'gear' => 0
-                    ]
-                ];
-                ?>
-                <div class="post-info mb1">
-                    <div class="col-3-12 center post-sidebar">
-                        <a href="/user/<?= $reply->author ?>" class="post-author-name"><?= htmlspecialchars($reply->username) ?></a>
-                        <div class="avatar-container mt1 mb1">
-                            <canvas class="avatar-reply avatar-canvas"
-                                    id="reply-avatar-<?php echo (int)$reply->author; ?>-<?php echo (int)$reply->id; ?>"
-                                    width="100" height="100"
-                                    data-user-id="<?php echo (int)$reply->author; ?>"
-                                    data-render-type="avatar"
-                                    data-colors='<?php echo htmlspecialchars(json_encode($replyAvatarData['colors']), ENT_QUOTES, 'UTF-8'); ?>'
-                                    data-items='<?php echo htmlspecialchars(json_encode($replyAvatarData['items']), ENT_QUOTES, 'UTF-8'); ?>'
-                                    data-hash="<?php echo htmlspecialchars($reply->avatar_hash); ?>">
-                            </canvas>
-                        </div>
-                        <?php if ($reply->administrator >= 1): ?>
-                            <div class="tag is-danger">Admin</div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="col-9-12 post-main">
-                        <div class="post-date"><?= date('M j, Y g:i A', $reply->timemade) ?></div>
-                        <div class="post-content mt1">
-                            <?= nl2br(htmlspecialchars($reply->content)) ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
         </div>
     </div>
+</section>
 
-    <!-- Reply Form -->
-    <?php if ($AUTH && !$thread->locked): ?>
-        <div class="card mt2">
-            <div class="top blue">Post Reply</div>
-            <div class="content">
-                <form method="post" action="/forum/reply/<?= $id ?>">
-                    <input type="hidden" name="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
-                    <textarea class="textarea mb1" name="content" placeholder="Write your reply..." rows="5" maxlength="2000" required></textarea>
-                    <button type="submit" class="button blue">Post Reply</button>
-                </form>
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3">
+                <aside class="menu">
+                    <p class="menu-label">Thread Info</p>
+                    <div class="box">
+                        <p><strong>Views:</strong> <?= number_format($thread->views) ?></p>
+                        <p><strong>Replies:</strong> <?= number_format($totalReplies) ?></p>
+                        <p><strong>Created:</strong> <?= date('M j, Y', $thread->timemade) ?></p>
+                    </div>
+                    
+                    <?php if ($AUTH && $my->administrator >= 1): ?>
+                        <p class="menu-label">Admin Actions</p>
+                        <div class="buttons">
+                            <a href="/forum/post/<?= $id ?>?action=<?= $thread->locked ? 'unlock' : 'lock' ?>" 
+                               class="button is-small <?= $thread->locked ? 'is-success' : 'is-warning' ?>">
+                                <i class="fas fa-<?= $thread->locked ? 'unlock' : 'lock' ?>"></i>
+                                <?= $thread->locked ? 'Unlock' : 'Lock' ?>
+                            </a>
+                            <a href="/forum/post/<?= $id ?>?action=<?= $thread->pinned ? 'unpin' : 'pin' ?>" 
+                               class="button is-small <?= $thread->pinned ? 'is-success' : 'is-info' ?>">
+                                <i class="fas fa-thumbtack"></i>
+                                <?= $thread->pinned ? 'Unpin' : 'Pin' ?>
+                            </a>
+                            <a href="/forum/post/<?= $id ?>?action=delete" 
+                               class="button is-small is-danger" 
+                               onclick="return confirm('Are you sure you want to delete this thread?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </aside>
+            </div>
+            
+            <div class="column is-9">
+                <!-- Original Post -->
+                <div class="box">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-64x64">
+                                <canvas class="avatar-post avatar-canvas"
+                                        id="post-avatar-<?php echo (int)$thread->author; ?>-<?php echo (int)$id; ?>"
+                                        width="64" height="64"
+                                        data-user-id="<?php echo (int)$thread->author; ?>"
+                                        data-render-type="avatar"
+                                        data-colors='<?php echo htmlspecialchars(json_encode($threadAuthorAvatarData['colors']), ENT_QUOTES, 'UTF-8'); ?>'
+                                        data-items='<?php echo htmlspecialchars(json_encode($threadAuthorAvatarData['items']), ENT_QUOTES, 'UTF-8'); ?>'
+                                        data-hash="<?php echo htmlspecialchars($thread->avatar_hash); ?>">
+                                </canvas>
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <div class="content">
+                                <p class="title is-5">
+                                    <a href="/user/<?= $thread->author ?>"><?= htmlspecialchars($thread->username) ?></a>
+                                    <?php if ($thread->administrator >= 1): ?>
+                                        <span class="tag is-danger is-small">Admin</span>
+                                    <?php endif; ?>
+                                    <?php if ($thread->premium >= 1): ?>
+                                        <span class="tag is-warning is-small">Premium</span>
+                                    <?php endif; ?>
+                                    <?php if ($thread->expire + 300 > time()): ?>
+                                        <span class="tag is-success is-small">Online</span>
+                                    <?php endif; ?>
+                                </p>
+                                <p class="subtitle is-6"><?= timeAgo($thread->timemade) ?></p>
+                                <div class="content">
+                                    <?= nl2br(htmlspecialchars($thread->content)) ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Replies -->
+                <?php if ($totalReplies > 0): ?>
+                    <h3 class="title is-4">Replies (<?= number_format($totalReplies) ?>)</h3>
+                    
+                    <?php foreach ($repliesData as $reply): ?>
+                        <?php 
+                        $replyAvatarData = $replyAuthorsAvatarData[$reply->author] ?? [
+                            'colors' => [
+                                'head' => [1, 0.8, 0.6],
+                                'torso' => [0.2, 0.2, 0.8],
+                                'leftArm' => [1, 0.8, 0.6],
+                                'rightArm' => [1, 0.8, 0.6],
+                                'leftLeg' => [0.1, 0.1, 0.1],
+                                'rightLeg' => [0.1, 0.1, 0.1]
+                            ],
+                            'items' => [
+                                'hats' => [],
+                                'face' => 'default',
+                                'accessory' => 0,
+                                'tshirt' => 0,
+                                'shirt' => 0,
+                                'pants' => 0,
+                                'gear' => 0
+                            ]
+                        ];
+                        ?>
+                        <div class="box">
+                            <div class="media">
+                                <div class="media-left">
+                                    <figure class="image is-48x48">
+                                        <canvas class="avatar-reply avatar-canvas"
+                                                id="reply-avatar-<?php echo (int)$reply->author; ?>-<?php echo (int)$reply->id; ?>"
+                                                width="48" height="48"
+                                                data-user-id="<?php echo (int)$reply->author; ?>"
+                                                data-render-type="avatar"
+                                                data-colors='<?php echo htmlspecialchars(json_encode($replyAvatarData['colors']), ENT_QUOTES, 'UTF-8'); ?>'
+                                                data-items='<?php echo htmlspecialchars(json_encode($replyAvatarData['items']), ENT_QUOTES, 'UTF-8'); ?>'
+                                                data-hash="<?php echo htmlspecialchars($reply->avatar_hash); ?>">
+                                        </canvas>
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p class="title is-6">
+                                            <a href="/user/<?= $reply->author ?>"><?= htmlspecialchars($reply->username) ?></a>
+                                            <?php if ($reply->administrator >= 1): ?>
+                                                <span class="tag is-danger is-small">Admin</span>
+                                            <?php endif; ?>
+                                            <?php if ($reply->premium >= 1): ?>
+                                                <span class="tag is-warning is-small">Premium</span>
+                                            <?php endif; ?>
+                                            <?php if ($reply->expire + 300 > time()): ?>
+                                                <span class="tag is-success is-small">Online</span>
+                                            <?php endif; ?>
+                                        </p>
+                                        <p class="subtitle is-7"><?= timeAgo($reply->timemade) ?></p>
+                                        <div class="content">
+                                            <?= nl2br(htmlspecialchars($reply->content)) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                    
+                    <!-- Pagination -->
+                    <?php if ($totalPages > 1): ?>
+                        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                            <?php if ($page > 1): ?>
+                                <a href="/forum/post/<?= $id ?>?page=<?= $page - 1 ?>" class="pagination-previous">Previous</a>
+                            <?php endif; ?>
+                            
+                            <?php if ($page < $totalPages): ?>
+                                <a href="/forum/post/<?= $id ?>?page=<?= $page + 1 ?>" class="pagination-next">Next page</a>
+                            <?php endif; ?>
+                            
+                            <ul class="pagination-list">
+                                <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
+                                    <li>
+                                        <a href="/forum/post/<?= $id ?>?page=<?= $i ?>" 
+                                           class="pagination-link <?= $i == $page ? 'is-current' : '' ?>"><?= $i ?></a>
+                                    </li>
+                                <?php endfor; ?>
+                            </ul>
+                        </nav>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <div class="box has-text-centered">
+                        <p class="subtitle">No replies yet. Be the first to respond!</p>
+                    </div>
+                <?php endif; ?>
+                
+                <!-- Reply Form -->
+                <?php if ($AUTH && !$thread->locked): ?>
+                    <div class="box">
+                        <h3 class="title is-5">Post Reply</h3>
+                        <form method="post" action="/forum/reply/<?= $id ?>">
+                            <input type="hidden" name="csrf" value="<?= $_SESSION['CSRF-TOKEN']; ?>">
+                            <div class="field">
+                                <div class="control">
+                                    <textarea class="textarea" name="content" placeholder="Write your reply..." rows="5" maxlength="2000" required></textarea>
+                                </div>
+                                <p class="help">2000 characters maximum</p>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button is-primary">
+                                        <i class="fas fa-reply"></i> Post Reply
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                <?php elseif ($thread->locked): ?>
+                    <div class="notification is-warning">
+                        <i class="fas fa-lock"></i> This thread is locked. No new replies can be posted.
+                    </div>
+                <?php else: ?>
+                    <div class="notification is-info">
+                        <i class="fas fa-info-circle"></i> You need to be logged in to post replies.
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
-    <?php endif; ?>
-</div>
+    </div>
+</section>
 
 <script>
     // Initialize avatar rendering for forum post page
