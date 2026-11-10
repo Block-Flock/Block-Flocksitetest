@@ -356,7 +356,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
         </button>
     <?php endif; ?>
 
-    <div class="container mt-5 mb-6">
+    <div class="container mb-6" style="margin-top: 100px;">
         
         <?php if (isset($_GET['msg'])): ?>
             <div class="notification is-success">Action completed successfully!</div>

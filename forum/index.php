@@ -1,6 +1,6 @@
 <?php
 $title = "Forum";
-require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/private/init.inc.php');
 
 // Allow guests but protect against abuse
 $app->checkAuth(false);
@@ -84,6 +84,133 @@ $totalPosts = $db->query('SELECT COUNT(*) as count FROM forum_posts')->fetch(PDO
 $totalReplies = $db->query('SELECT COUNT(*) as count FROM forum_replies')->fetch(PDO::FETCH_OBJ)->count;
 
 $recentActivity = getRecentGlobalActivity($db);
+
+// Pre-fetch latest posts for subforums to batch user data
+$latestPosts = [];
+foreach ($subforums as $id => $data) {
+    $latestPosts[$id] = getLatestPost($db, $id);
+}
+
+// ============================================================================
+// FETCH AVATAR DATA
+// ============================================================================
+
+$allUserIds = [];
+
+// From Recent Activity
+foreach ($recentActivity as $post) {
+    $allUserIds[] = (int)$post->author;
+}
+
+// From Latest Posts
+foreach ($latestPosts as $post) {
+    if ($post) {
+        $allUserIds[] = (int)$post->author;
+    }
+}
+
+$allUserIds = array_unique($allUserIds);
+$allUserIds = array_map('intval', array_values($allUserIds));
+
+// Fetch colors and wearables
+$userColors = [];
+$userWearables = [];
+
+if (!empty($allUserIds)) {
+    $placeholders = str_repeat('?,', count($allUserIds) - 1) . '?';
+    
+    try {
+        $colorStmt = $db->prepare("SELECT * FROM user_colors WHERE user IN ($placeholders)");
+        $colorStmt->execute($allUserIds);
+        while ($color = $colorStmt->fetch(PDO::FETCH_OBJ)) {
+            $userColors[(int)$color->user] = $color;
+        }
+    } catch (Exception $e) {}
+
+    try {
+        $wearableStmt = $db->prepare("SELECT * FROM user_data WHERE user IN ($placeholders)");
+        $wearableStmt->execute($allUserIds);
+        while ($wearable = $wearableStmt->fetch(PDO::FETCH_OBJ)) {
+            $userWearables[(int)$wearable->user] = $wearable;
+        }
+    } catch (Exception $e) {}
+}
+
+// Prepare avatar data map
+$avatarDataMap = [];
+foreach ($allUserIds as $uid) {
+    $data = getAvatarData($uid, $userColors, $userWearables);
+    if (!isset($data['items'])) $data['items'] = [];
+    $data['items'] = normalize_avatar_items_array($data['items']);
+    $avatarDataMap[$uid] = $data;
+}
+
+// ============================================================================
+// ASSETS & HEAD
+// ============================================================================
+
+$localThree = $_SERVER['DOCUMENT_ROOT'] . '/assets/vendor/three.min.js';
+$localGLTF = $_SERVER['DOCUMENT_ROOT'] . '/assets/vendor/GLTFLoader.js';
+$localOBJ = $_SERVER['DOCUMENT_ROOT'] . '/assets/vendor/OBJLoader.js';
+
+$extra_head_content = '';
+
+if (file_exists($localThree)) {
+    $extra_head_content .= '<script src="/assets/vendor/three.min.js"></script>' . PHP_EOL;
+} else {
+    $extra_head_content .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>' . PHP_EOL;
+}
+
+if (file_exists($localGLTF)) {
+    $extra_head_content .= '<script src="/assets/vendor/GLTFLoader.js"></script>' . PHP_EOL;
+} else {
+    $extra_head_content .= '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>' . PHP_EOL;
+}
+
+if (file_exists($localOBJ)) {
+    $extra_head_content .= '<script src="/assets/vendor/OBJLoader.js"></script>' . PHP_EOL;
+} else {
+    $extra_head_content .= '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>' . PHP_EOL;
+}
+
+// Add CSS for avatar canvases
+$extra_head_content .= '<style>
+    .avatar-forum {
+        display: block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #16213e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .avatar-forum-small {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .image.is-24x24 {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .image.is-24x24 canvas {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .image.is-32x32 {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .image.is-32x32 canvas {
+        width: 100%;
+        height: 100%;
+    }
+</style>';
+
+require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
 ?>
 
 <section class="hero is-small is-primary">
@@ -112,7 +239,7 @@ $recentActivity = getRecentGlobalActivity($db);
                 <?php foreach ($subforums as $id => $subforum): ?>
                     <?php 
                     $threadCount = getThreadCount($db, $id);
-                    $latestPost = getLatestPost($db, $id);
+                    $latestPost = $latestPosts[$id] ?? null;
                     ?>
                     <div class="glass-box forum-category-card mb-4 p-5">
                         <article class="media">
@@ -141,11 +268,20 @@ $recentActivity = getRecentGlobalActivity($db);
                                     </div>
                                     
                                     <?php if ($latestPost): ?>
+                                        <?php $lpAvatar = $avatarDataMap[$latestPost->author] ?? ['colors'=>[], 'items'=>[]]; ?>
                                         <div class="box is-shadowless has-background-dark mt-2 p-2" style="background: rgba(0,0,0,0.2) !important; border: 1px solid rgba(255,255,255,0.05);">
                                             <div class="media is-align-items-center">
                                                 <div class="media-left mr-2">
                                                     <figure class="image is-24x24">
-                                                        <img src="https://bricktaria.com/assets/images/avatars/<?= $latestPost->avatar_hash ?>.png" class="is-rounded" alt="Avatar">
+                                                        <canvas class="avatar-forum-small avatar-canvas"
+                                                                id="cat-avatar-<?= $id ?>-<?= $latestPost->author ?>"
+                                                                width="24" height="24"
+                                                                data-user-id="<?= $latestPost->author ?>"
+                                                                data-render-type="avatar"
+                                                                data-colors='<?= htmlspecialchars(json_encode($lpAvatar['colors']), ENT_QUOTES, 'UTF-8') ?>'
+                                                                data-items='<?= htmlspecialchars(json_encode($lpAvatar['items']), ENT_QUOTES, 'UTF-8') ?>'
+                                                                data-hash="<?= htmlspecialchars($latestPost->avatar_hash) ?>">
+                                                        </canvas>
                                                     </figure>
                                                 </div>
                                                 <div class="media-content">
@@ -197,10 +333,19 @@ $recentActivity = getRecentGlobalActivity($db);
                     <div class="glass-box p-0">
                         <?php if (count($recentActivity) > 0): ?>
                             <?php foreach ($recentActivity as $post): ?>
+                                <?php $raAvatar = $avatarDataMap[$post->author] ?? ['colors'=>[], 'items'=>[]]; ?>
                                 <div class="p-3 border-bottom" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <div class="is-flex is-align-items-start">
                                         <figure class="image is-32x32 mr-2 mt-1">
-                                            <img src="https://bricktaria.com/assets/images/avatars/<?= $post->avatar_hash ?>.png" class="is-rounded" onerror="this.src='/assets/images/avatars/default.png'">
+                                            <canvas class="avatar-forum avatar-canvas"
+                                                    id="recent-avatar-<?= $post->id ?>-<?= $post->author ?>"
+                                                    width="32" height="32"
+                                                    data-user-id="<?= $post->author ?>"
+                                                    data-render-type="avatar"
+                                                    data-colors='<?= htmlspecialchars(json_encode($raAvatar['colors']), ENT_QUOTES, 'UTF-8') ?>'
+                                                    data-items='<?= htmlspecialchars(json_encode($raAvatar['items']), ENT_QUOTES, 'UTF-8') ?>'
+                                                    data-hash="<?= htmlspecialchars($post->avatar_hash) ?>">
+                                            </canvas>
                                         </figure>
                                         <div style="width: 100%; overflow: hidden;">
                                             <p class="is-size-7 mb-1 is-truncated">
@@ -264,5 +409,57 @@ $recentActivity = getRecentGlobalActivity($db);
         </div>
     </div>
 </section>
+
+<script>
+    // Initialize avatar rendering for forum index
+    document.addEventListener('DOMContentLoaded', function() {
+        // Small helper to ensure loaders exist
+        function ensureLoader(name, url) {
+            try {
+                if (!window.THREE) return;
+                if (name === 'GLTFLoader' && !window.THREE.GLTFLoader) {
+                    var s = document.createElement('script');
+                    s.src = url;
+                    s.onload = function(){ console.info('Forum Index: Loaded fallback GLTFLoader'); };
+                    s.onerror = function(){ console.warn('Forum Index: Failed to load GLTFLoader fallback'); };
+                    document.head.appendChild(s);
+                }
+                if (name === 'OBJLoader' && !window.THREE.OBJLoader) {
+                    var s2 = document.createElement('script');
+                    s2.src = url;
+                    s2.onload = function(){ console.info('Forum Index: Loaded fallback OBJLoader'); };
+                    s2.onerror = function(){ console.warn('Forum Index: Failed to load OBJLoader fallback'); };
+                    document.head.appendChild(s);
+                }
+            } catch (e) { console.warn('ensureLoader error', e); }
+        }
+        
+        setTimeout(function() {
+            // use CDN fallbacks if header provided local files not present
+            ensureLoader('GLTFLoader','https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js');
+            ensureLoader('OBJLoader','https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js');
+            
+            // Load the avatar renderer script
+            const script = document.createElement('script');
+            script.src = '/assets/js/dashboard-avatars.js?v=<?php echo time(); ?>';
+            script.onload = function() {
+                console.log('Forum Index: Avatar script loaded');
+                // Wait a bit for THREE to be fully ready
+                setTimeout(() => {
+                    if (typeof initializeDashboardAvatars3D === 'function') {
+                        console.log('Forum Index: Initializing avatar renderer...');
+                        initializeDashboardAvatars3D();
+                    } else {
+                        console.error('Forum Index: initializeDashboardAvatars3D function not found');
+                    }
+                }, 1000);
+            };
+            script.onerror = function() {
+                console.error('Forum Index: Failed to load dashboard-avatars.js');
+            };
+            document.head.appendChild(script);
+        }, 500);
+    });
+</script>
 
 <?php $app->footer(); ?>
