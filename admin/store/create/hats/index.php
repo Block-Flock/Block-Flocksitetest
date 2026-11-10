@@ -75,16 +75,22 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
         $db->prepare('UPDATE store_items SET owners = owners + 1 WHERE id = ?')->execute([$id]);
 
         // Define correct rendering path
-        $renderPath = $_SERVER['DOCUMENT_ROOT'].'/JGFJFSHFSAH/core/rendering/hat/'.$id;
+        $renderPath = $_SERVER['DOCUMENT_ROOT'].'/JGFJFSHFSAH/core/rendering/hat/'.$id.'/';
 
         $storeImagePath = $_SERVER['DOCUMENT_ROOT'].'/assets/images/store/'.$Hash.'.png';
-        if(move_uploaded_file($_FILES['image']['tmp_name'], $storeImagePath)) {
-            if (!file_exists($renderPath)) {
-                $mkdir_res = mkdir($renderPath, 0777, true);
-            }
+        
+        // Ensure directories exist
+        $storeImageDir = dirname($storeImagePath);
+        if (!file_exists($storeImageDir)) {
+            mkdir($storeImageDir, 0777, true);
+        }
+        if (!file_exists($renderPath)) {
+            mkdir($renderPath, 0777, true);
+        }
 
-            if(move_uploaded_file($_FILES['obj']['tmp_name'], $renderPath.'/'.$id.'.obj')) {
-                if(move_uploaded_file($_FILES['texture']['tmp_name'], $renderPath.'/'.$id.'.png')) {
+        if(move_uploaded_file($_FILES['image']['tmp_name'], $storeImagePath)) {
+            if(move_uploaded_file($_FILES['obj']['tmp_name'], $renderPath.$id.'.obj')) {
+                if(move_uploaded_file($_FILES['texture']['tmp_name'], $renderPath.$id.'.png')) {
                     header('Location: /store/view/'.$id);
                     die;
                 } else {

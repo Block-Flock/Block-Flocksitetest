@@ -93,7 +93,7 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
 
         }
         $insert->bindValue(7, '0', PDO::PARAM_STR);
-        $insert->bindValue(8, $id, PDO::PARAM_INT);
+        $insert->bindValue(8, $Hash, PDO::PARAM_STR);
         $insert->bindValue(9, time(), PDO::PARAM_INT);
         $insert->bindValue(10, time(), PDO::PARAM_INT);
         $insert->execute();
@@ -110,15 +110,23 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
         $ownerUpdate->bindValue(1, $id, PDO::PARAM_INT);
         $ownerUpdate->execute();
 
-        if(move_uploaded_file($_FILES['image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'].'/admin/images/store/'.$id.'.png')) {
+        // Define correct rendering paths
+        $storeImagePath = $_SERVER['DOCUMENT_ROOT'].'/assets/images/store/'.$Hash.'.png';
+        $renderShirtDir = $_SERVER['DOCUMENT_ROOT'].'/JGFJFSHFSAH/core/rendering/shirt/'.$id;
+        $renderShirtPath = $renderShirtDir.'/'.$id.'.png';
 
-            header('Location: /store/view/?id='.$id);
-            die;
-
+        if(move_uploaded_file($_FILES['image']['tmp_name'], $storeImagePath)) {
+            if (!file_exists($renderShirtDir)) {
+                mkdir($renderShirtDir, 0777, true);
+            }
+            if(copy($storeImagePath, $renderShirtPath)) {
+                header('Location: /store/view/?id='.$id);
+                die;
+            } else {
+                $err = "Could not setup rendering files.";
+            }
         } else {
-
-            echo "Could not upload shirt!";
-
+            $err = "Could not upload shirt image.";
         }
 
 

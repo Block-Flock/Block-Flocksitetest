@@ -40,7 +40,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
             $insert = $db->prepare('INSERT INTO store_items (`name`, about, creator, `type`, price, offsale, moderation, `image`, timeupdated, timecreated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insert->bindValue(1, $name, PDO::PARAM_STR);
             $insert->bindValue(2, $description, PDO::PARAM_STR);
-            $insert->bindValue(3, '1', PDO::PARAM_INT);
+            $insert->bindValue(3, $_SESSION['id'], PDO::PARAM_INT);
             $insert->bindValue(4, '7', PDO::PARAM_INT); // Type 7 for Heads
             $insert->bindValue(5, $price, PDO::PARAM_INT);
             $insert->bindValue(6, ($price == -1) ? '1' : '0', PDO::PARAM_INT);
@@ -59,17 +59,18 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
 
             $db->prepare('UPDATE store_items SET owners = owners + 1 WHERE id = ?')->execute([$id]);
 
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'].'/assets/images/store/';
+            $storeImagePath = $_SERVER['DOCUMENT_ROOT'].'/assets/images/store/'.$Hash.'.png';
             $renderDir = $_SERVER['DOCUMENT_ROOT'].'/JGFJFSHFSAH/core/rendering/head/'.$id.'/';
 
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+            $storeImageDir = dirname($storeImagePath);
+            if (!file_exists($storeImageDir)) {
+                mkdir($storeImageDir, 0777, true);
             }
             if (!file_exists($renderDir)) {
                 mkdir($renderDir, 0777, true);
             }
 
-            if(move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir.$Hash.'.png')) {
+            if(move_uploaded_file($_FILES['image']['tmp_name'], $storeImagePath)) {
                 if(move_uploaded_file($_FILES['obj']['tmp_name'], $renderDir.$id.'.obj')) {
                     header('Location: /store/view/'.$id);
                     die();

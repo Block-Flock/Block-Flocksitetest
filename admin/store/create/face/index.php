@@ -38,7 +38,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
             $insert = $db->prepare('INSERT INTO store_items (`name`, about, creator, `type`, price, offsale, moderation, `image`, timeupdated, timecreated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $insert->bindValue(1, $name, PDO::PARAM_STR);
             $insert->bindValue(2, $description, PDO::PARAM_STR);
-            $insert->bindValue(3, '1', PDO::PARAM_INT);
+            $insert->bindValue(3, $_SESSION['id'], PDO::PARAM_INT);
             $insert->bindValue(4, '2', PDO::PARAM_INT); // Type 2 for Faces
             $insert->bindValue(5, $price, PDO::PARAM_INT);
             $insert->bindValue(6, ($price == -1) ? '1' : '0', PDO::PARAM_INT);
@@ -59,26 +59,20 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
             $renderFaceDir = $_SERVER['DOCUMENT_ROOT'].'/JGFJFSHFSAH/core/rendering/faces/'.$id.'/';
             $renderFacePath = $renderFaceDir.$id.'.png';
 
-            if (!file_exists($renderFaceDir)) {
-                if (!mkdir($renderFaceDir, 0777, true)) {
-                    error_log("Failed to create directory: " . $renderFaceDir);
-                } else {
-                    error_log("Created directory: " . $renderFaceDir);
-                }
+            $storeImageDir = dirname($storeImagePath);
+            if (!file_exists($storeImageDir)) {
+                mkdir($storeImageDir, 0777, true);
             }
 
-            if(move_uploaded_file($_FILES['image']['tmp_name'], $storeImagePath)) {
-                error_log("Store image moved successfully to: " . $storeImagePath);
-                if (copy($storeImagePath, $renderFacePath)) {
-                     error_log("Image copied to render path: " . $renderFacePath);
-                } else {
-                     error_log("Failed to copy image to render path: " . $renderFacePath);
-                }
-                error_log("Redirecting to: /store/view/" . $id);
+            if (!file_exists($renderFaceDir)) {
+                mkdir($renderFaceDir, 0777, true);
+            }
+
+            if(move_uploaded_file($_FILES['image']['tmp_name'], $renderFacePath)) {
+                copy($renderFacePath, $storeImagePath);
                 header('Location: /store/view/'.$id);
                 die();
             } else {
-                error_log("Failed to move uploaded file.");
                 $err = 'Could not upload face image.';
             }
         } catch (PDOException $e) {
