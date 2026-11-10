@@ -154,15 +154,42 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
                         </div>
                         <div class="field">
                             <label class="label">Upload OBJ File</label>
-                            <div class="control"><input class="input" type="file" name="obj" required></div>
+                            <div class="file has-name is-fullwidth mb-3">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="obj" required>
+                                    <span class="file-cta">
+                                        <span class="file-icon"><i class="fas fa-upload"></i></span>
+                                        <span class="file-label">Choose OBJ File...</span>
+                                    </span>
+                                    <span class="file-name">No file selected</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="field">
                             <label class="label">Upload Texture Image (.png)</label>
-                            <div class="control"><input class="input" type="file" name="texture" required></div>
+                            <div class="file has-name is-fullwidth mb-3">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="texture" required>
+                                    <span class="file-cta">
+                                        <span class="file-icon"><i class="fas fa-upload"></i></span>
+                                        <span class="file-label">Choose Texture...</span>
+                                    </span>
+                                    <span class="file-name">No file selected</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="field">
                             <label class="label">Upload Store Image (.png)</label>
-                            <div class="control"><input class="input" type="file" name="image" required></div>
+                            <div class="file has-name is-fullwidth mb-3">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="image" required>
+                                    <span class="file-cta">
+                                        <span class="file-icon"><i class="fas fa-upload"></i></span>
+                                        <span class="file-label">Choose Store Image...</span>
+                                    </span>
+                                    <span class="file-name">No file selected</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="control">
                             <button type="submit" class="button is-primary">Create Hat</button>
@@ -173,6 +200,22 @@ if(isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price'
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // file input selection
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.files.length > 0) {
+                    const fileName = input.parentNode.querySelector('.file-name');
+                    if (fileName) {
+                        fileName.textContent = input.files[0].name;
+                    }
+                }
+            });
+        });
+    });
+</script>
 </div>
 </section>
 <?php require_once($_SERVER['DOCUMENT_ROOT'].'/private/footer.inc.php'); ?>

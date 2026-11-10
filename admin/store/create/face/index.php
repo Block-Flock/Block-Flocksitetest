@@ -144,6 +144,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
                                 <span class="file-icon"><i class="fas fa-upload"></i></span>
                                 <span class="file-label">Upload Face Image (.png)...</span>
                             </span>
+                            <span class="file-name">No file selected</span>
                         </label>
                     </div>
 
@@ -157,4 +158,20 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $AUTH && $my->administrator >= 2) {
 </div>
 </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // file input selection
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.files.length > 0) {
+                    const fileName = input.parentNode.querySelector('.file-name');
+                    if (fileName) {
+                        fileName.textContent = input.files[0].name;
+                    }
+                }
+            });
+        });
+    });
+</script>
 <?php require_once($_SERVER['DOCUMENT_ROOT'].'/private/footer.inc.php'); ?>
