@@ -180,14 +180,13 @@ ob_start();
         .viewer-card { position: relative; top: 0; }
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
 <?php
 $extra_head_content = ob_get_clean();
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/private/header.inc.php');
+?>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<?php
 
 // 1. Security Checks - Redone after header include to ensure $AUTH is available
 if (!$AUTH) {
@@ -521,7 +520,6 @@ $avatarConfig = [
         <?php endforeach; ?>
     </div>
 </div>
-</div> <!-- End avatar-page-wrapper (duplicate close? removing) -->
 
 <!-- Close header.inc.php containers -->
     </div> <!-- Close .page.container -->
@@ -531,6 +529,15 @@ $avatarConfig = [
     // ===========================================
     // 1. STATE MANAGEMENT
     // ===========================================
+    console.log("DEBUG: Checking THREE.js status...");
+    if (typeof THREE === 'undefined') {
+        console.error("DEBUG: THREE is not defined!");
+    } else {
+        console.log("DEBUG: THREE is defined. Revision:", THREE.REVISION);
+        console.log("DEBUG: OrbitControls present?", typeof THREE.OrbitControls !== 'undefined');
+        console.log("DEBUG: GLTFLoader present?", typeof THREE.GLTFLoader !== 'undefined');
+    }
+
     const Config = {
         csrf: "<?= $_SESSION['csrf_token'] ?>",
         userId: <?= $uid ?>,
