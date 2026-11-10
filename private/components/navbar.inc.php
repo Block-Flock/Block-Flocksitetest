@@ -195,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. Initial Animation
+    // 5. Initial Animation (Disabled problematic animations)
+    /*
     setTimeout(() => {
         const items = document.querySelectorAll('.navbar-item');
         items.forEach((item, index) => {
@@ -203,5 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
             item.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.05}s`;
         });
     }, 100);
+    */
 });
 </script>

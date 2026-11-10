@@ -344,7 +344,7 @@ html { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
 }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-/* User Avatar in Nav */
+/* user-avatar-nav */
 .user-avatar-nav {
     width: 32px; height: 32px; border-radius: 50%;
     border: 2px solid rgba(255,255,255,0.6);
@@ -490,6 +490,55 @@ footer.footer {
 .glass-box .icon {
     color: var(--primary) !important;
 }
+
+/* Badge Positioning - Over Buttons */
+.notification-badge { 
+    position: relative !important; 
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.badge-counter {
+    position: absolute !important; 
+    top: 5px !important; 
+    right: 5px !important;
+    background: #cc0000 !important; 
+    color: white !important;
+    border-radius: 50% !important; 
+    height: 18px !important; 
+    width: 18px !important;
+    font-size: 10px !important; 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important;
+    border: 2px solid white !important;
+    font-weight: bold !important; 
+    z-index: 10 !important;
+    pointer-events: none !important;
+}
+
+/* Prevent navbar items from expanding on desktop when badges are present */
+@media screen and (min-width: 1024px) {
+    .navbar-item.notification-badge {
+        width: 45px !important;
+        padding: 0 !important;
+        margin: 0 5px !important;
+    }
+}
+
+/* Fix for dashboard/global navbar interference */
+body .navbar.modern-navbar {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.modern-navbar .navbar-item {
+    animation: none !important; /* Disable problematic animations */
+    opacity: 1 !important;
+    transform: none !important;
+}
+
 
 /* Auth Page Specifics */
 .auth-container {

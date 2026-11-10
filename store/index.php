@@ -42,14 +42,19 @@ function getCategoryName($type) {
     .store-hero {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 3rem 1.5rem;
+        padding: 4rem 1.5rem;
         border-radius: 0 0 20px 20px;
         margin-bottom: 2rem;
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
-    .store-hero .title { color: white; }
-    .store-hero .subtitle { color: #e0e0e0; }
+    .store-hero .title { color: white; margin-bottom: 0.5rem; }
+    .store-hero .subtitle { color: #e0e0e0; margin-bottom: 2rem; }
     
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
     .menu-list a {
         border-radius: 8px;
         transition: all 0.2s;
@@ -60,21 +65,47 @@ function getCategoryName($type) {
         color: white !important;
     }
     .menu-list a:hover:not(.is-active) {
-        background-color: #f5f5f5;
+        background-color: rgba(255, 255, 255, 0.05);
         transform: translateX(5px);
+    }
+
+    .store-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
     }
 
     .item-card {
         height: 100%;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 12px;
         overflow: hidden;
         position: relative;
+        display: flex;
+        flex-direction: column;
     }
     .item-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #764ba2;
+    }
+    .item-card-image {
+        position: relative;
+        aspect-ratio: 1;
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .item-card-content {
+        padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     .price-tag {
         background-color: #23d160;
@@ -98,25 +129,9 @@ function getCategoryName($type) {
         z-index: 10;
     }
     .canvas-container canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-
-        transform: translate(-50%, -50%);
-
         max-width: 100%;
         max-height: 100%;
-
-        width: auto !important;
-        height: auto !important;
-
         display: block;
-    }
-    }
-    .canvas-container canvas {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
     }
     .text-truncate {
         white-space: nowrap;
@@ -131,7 +146,7 @@ function getCategoryName($type) {
     .admin-controls {
         margin-top: 10px;
         padding-top: 10px;
-        border-top: 1px solid #eee;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 </style>
 
@@ -140,15 +155,15 @@ function getCategoryName($type) {
         <h1 class="title is-2">Marketplace</h1>
         <h2 class="subtitle is-5">Discover items for your avatar</h2>
         
-        <div class="columns is-centered mt-4">
-            <div class="column is-6">
-                <div class="field has-addons">
-                    <div class="control is-expanded">
-                        <input class="input is-medium is-rounded" type="text" id="searchInput" placeholder="Search items..." value="<?php echo htmlspecialchars($query ?? ''); ?>">
-                    </div>
-                    <div class="control">
-                        <button class="button is-medium is-primary is-rounded" onclick="searchItems()">Search</button>
-                    </div>
+        <div class="search-container">
+            <div class="field has-addons">
+                <div class="control is-expanded">
+                    <input class="input is-medium is-rounded" type="text" id="searchInput" placeholder="Search items..." value="<?php echo htmlspecialchars($query ?? ''); ?>">
+                </div>
+                <div class="control">
+                    <button class="button is-medium is-primary is-rounded" onclick="searchItems()">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
                 </div>
             </div>
         </div>
@@ -159,7 +174,7 @@ function getCategoryName($type) {
     <div class="container">
         <div class="columns">
             <div class="column is-3">
-                <aside class="menu box p-4">
+                <aside class="menu box glass-box p-4">
                     <p class="menu-label"><b>Item Type</b></p>
                     <ul class="menu-list">
                         <li><a href="#" onclick="filterCategory(1); return false;" class="<?= $category == 1 ? 'is-active' : '' ?>">🎩 Hats</a></li>
